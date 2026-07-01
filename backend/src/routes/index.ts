@@ -1,0 +1,5 @@
+export { default as authRoutes } from './auth.routes.js'
+export { default as usersRoutes } from './users.routes.js'
+export { default as devicesRoutes } from './devices.routes.js'
+export { default as locationsRoutes } from './locations.routes.js'
+export { default as hierarchyRoutes } from './hierarchy.routes.js'

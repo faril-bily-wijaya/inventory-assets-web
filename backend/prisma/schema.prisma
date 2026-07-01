@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  fullName  String?
+  role      Role     @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Regional {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  districts District[]
+}
+
+model District {
+  id         String     @id @default(cuid())
+  name       String
+  regionalId String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  regional   Regional   @relation(fields: [regionalId], references: [id])
+  clusters   Cluster[]
+}
+
+model Cluster {
+  id         String     @id @default(cuid())
+  name       String
+  districtId String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  district   District   @relation(fields: [districtId], references: [id])
+  locations  Location[]
+}
+
+model Location {
+  id         String   @id @default(cuid())
+  name       String
+  latitude   Float
+  longitude  Float
+  clusterId  String
+  classType  String?
+  address    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cluster    Cluster  @relation(fields: [clusterId], references: [id])
+  devices    Device[]
+}
+
+model Device {
+  id           String    @id @default(cuid())
+  deviceCode   String    @unique
+  deviceName   String
+  deviceType   String
+  brand        String?
+  model        String?
+  serialNumber String?
+  kapasitas    String?
+  year         Int?
+  room         String?
+  status       String    @default("active")
+  condition    String?
+  capReal      String?
+  locationId   String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  location     Location  @relation(fields: [locationId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  USER
+}

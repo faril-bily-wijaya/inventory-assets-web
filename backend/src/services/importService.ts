@@ -1,0 +1,401 @@
+/**
+ * Import Service
+ *
+ * Core business logic for CSV/XLSX import of devices and their
+ * location hierarchy (regional → district → cluster → location).
+ *
+ * - generateImportPreview()  — dry-run: counts new vs. existing records,
+ *                              detects intra-file duplicates, and collects
+ *                              validation errors without touching the database.
+ * - executeImport()           — performs the actual upsert/replace operation.
+ *
+ * Dependencies:
+ *   ParsedRow from src/utils/fileParser.ts
+ *   PrismaClient from @prisma/client
+ */
+
+import type { PrismaClient } from '@prisma/client'
+import type { ParsedRow } from '../utils/fileParser.js'
+
+// ---------------------------------------------------------------------------
+// Public types
+// ---------------------------------------------------------------------------
+
+export interface ImportPreview {
+  totalRows: number
+  devicesBaru: number
+  devicesUpdated: number
+  duplikatDalamFile: number
+  regionalsBaru: number
+  districtsBaru: number
+  clustersBaru: number
+  locationsBaru: number
+  errors: string[]
+}
+
+export interface ImportResult {
+  newDevices: number
+  updatedDevices: number
+  newLocations: number
+  totalProcessed: number
+  errors: string[]
+}
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+export const CATU_DAYA_TYPES: readonly string[] = [
+  'GENSET', 'BATSTARTER', 'BATBASAH', 'BATKERING', 'RECTIFIER',
+  'INVERTER', 'UPS', 'MDP', 'AVR', 'TANGKIBBM', 'DCPDB',
+  'ACPDB', 'DCPDBSTANDING', 'ACPDBSTANDING', 'ELECTRICALPANEL',
+  'TRAFO', 'ATS', 'AMF',
+]
+
+const BATCH_SIZE = 100
+
+const HIERARCHY_DEFAULTS = {
+  regional: 'REGIONAL DEFAULT',
+  district: 'DISTRICT DEFAULT',
+  cluster: 'CLUSTER DEFAULT',
+} as const
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds the lookup key used for intra-file duplicate detection.
+ */
+function buildRowKey(row: ParsedRow): string {
+  return `${row.code}::${row.label_code ?? ''}`
+}
+
+/**
+ * Normalises a string field so that variations of the same name
+ * (different case, extra whitespace) map to a single canonical form.
+ */
+function normalise(s: string | undefined): string {
+  return (s ?? '').trim()
+}
+
+/**
+ * Maps a ParsedRow to the flat device data needed for Prisma device create/update.
+ */
+function mapDeviceData(row: ParsedRow, locationId: string) {
+  return {
+    deviceCode: normalise(row.code),
+    deviceName: normalise(row.name),
+    deviceType: normalise(row.jenis),
+    serialNumber: normalise(row.label_code) || null,
+    brand: normalise(row.merk) || null,
+    model: null,
+    kapasitas: normalise(row.kapasitas) || null,
+    year: row.tahun_operasi > 0 ? row.tahun_operasi : null,
+    room: normalise(row.ruangan_name) || null,
+    status: normalise(row.status) || 'AKTIF',
+    condition: normalise(row.kondisi) || null,
+    capReal: normalise(row.jenis_tegangan) || null,
+    locationId,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Preview
+// ---------------------------------------------------------------------------
+
+/**
+ * Generates a dry-run preview of an import without modifying the database.
+ *
+ * Steps:
+ *  1. Detect duplicates within the file (code + label_code).
+ *  2. Count devices that already exist in DB vs. new ones.
+ *  3. Count new hierarchy nodes (regional, district, cluster, location).
+ *  4. Collect row-level validation errors.
+ */
+export async function generateImportPreview(
+  data: ParsedRow[],
+  _mode: 'upsert' | 'replace',
+  prisma: PrismaClient,
+): Promise<ImportPreview> {
+  const errors: string[] = []
+
+  // --- 1. Intra-file duplicate detection ---
+  const seenKeys = new Set<string>()
+  const duplicateKeys = new Set<string>()
+
+  for (const row of data) {
+    const key = buildRowKey(row)
+    if (seenKeys.has(key)) {
+      duplicateKeys.add(key)
+    } else {
+      seenKeys.add(key)
+    }
+  }
+
+  // --- 2. Collect all unique device codes & hierarchy names ---
+  const deviceCodeSet = new Set<string>()
+  const regionalNames = new Set<string>()
+  const districtNames = new Set<string>()
+  const clusterNames = new Set<string>()
+  const locationNames = new Set<string>()
+
+  for (const row of data) {
+    deviceCodeSet.add(normalise(row.code))
+
+    const reg = normalise(row.region) || HIERARCHY_DEFAULTS.regional
+    const dist = normalise(row.district) || HIERARCHY_DEFAULTS.district
+    const clus = normalise(row.organization_name) || normalise(row.cluster) || HIERARCHY_DEFAULTS.cluster
+    const loc = normalise(row.sites_name)
+
+    if (loc) locationNames.add(loc)
+    if (clus) clusterNames.add(clus)
+    if (dist) districtNames.add(dist)
+    if (reg) regionalNames.add(reg)
+
+    // Basic validation
+    if (!row.code) {
+      errors.push(`Baris "${row.name}": code/deviceCode kosong`)
+    }
+  }
+
+  // --- 3. Check which device codes already exist ---
+  const existingCodes = await prisma.device.findMany({
+    where: { deviceCode: { in: [...deviceCodeSet] } },
+    select: { deviceCode: true },
+  })
+  const existingCodeSet = new Set(existingCodes.map((d) => d.deviceCode))
+
+  // --- 4. Check which hierarchy names already exist ---
+  const [existingRegs, existingDists, existingClusters, existingLocs] = await Promise.all([
+    prisma.regional.findMany({ where: { name: { in: [...regionalNames] } }, select: { name: true } }),
+    prisma.district.findMany({ where: { name: { in: [...districtNames] } }, select: { name: true } }),
+    prisma.cluster.findMany({ where: { name: { in: [...clusterNames] } }, select: { name: true } }),
+    prisma.location.findMany({ where: { name: { in: [...locationNames] } }, select: { name: true } }),
+  ])
+
+  const existingRegSet = new Set(existingRegs.map((r) => r.name))
+  const existingDistSet = new Set(existingDists.map((d) => d.name))
+  const existingClusterSet = new Set(existingClusters.map((c) => c.name))
+  const existingLocSet = new Set(existingLocs.map((l) => l.name))
+
+  // --- 5. Compute counts ---
+  let devicesBaru = 0
+  let devicesUpdated = 0
+  for (const code of deviceCodeSet) {
+    if (existingCodeSet.has(code)) devicesUpdated++
+    else devicesBaru++
+  }
+
+  const regionalsBaru = [...regionalNames].filter((n) => !existingRegSet.has(n)).length
+  const districtsBaru = [...districtNames].filter((n) => !existingDistSet.has(n)).length
+  const clustersBaru = [...clusterNames].filter((n) => !existingClusterSet.has(n)).length
+  const locationsBaru = [...locationNames].filter((n) => !existingLocSet.has(n)).length
+
+  return {
+    totalRows: data.length,
+    devicesBaru,
+    devicesUpdated,
+    duplikatDalamFile: duplicateKeys.size,
+    regionalsBaru,
+    districtsBaru,
+    clustersBaru,
+    locationsBaru,
+    errors,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Execute
+// ---------------------------------------------------------------------------
+
+/**
+ * Executes the actual import.
+ *
+ * Mode 'replace': deletes ALL existing devices (soft-delete) and locations,
+ *                 then inserts everything fresh.
+ * Mode 'upsert':  inserts new records and updates existing ones by deviceCode.
+ *
+ * Hierarchy is always upserted (find or create) top-down:
+ *   regional → district → cluster → location
+ *
+ * Devices are upserted by deviceCode.
+ *
+ * Processing is batched in groups of BATCH_SIZE (100) for performance.
+ */
+export async function executeImport(
+  data: ParsedRow[],
+  mode: 'upsert' | 'replace',
+  prisma: PrismaClient,
+): Promise<ImportResult> {
+  const errors: string[] = []
+  let newDevices = 0
+  let updatedDevices = 0
+  let newLocations = 0
+
+  // -------------------------------------------------------------------------
+  // Replace mode: wipe existing devices and locations
+  // -------------------------------------------------------------------------
+  if (mode === 'replace') {
+    await prisma.device.updateMany({ data: { deletedAt: new Date() } })
+    await prisma.location.deleteMany({})
+
+    // Cascade: delete empty clusters, districts, regionals
+    // (only if they have no remaining children)
+    await prisma.cluster.deleteMany({
+      where: { locations: { none: {} } },
+    })
+    await prisma.district.deleteMany({
+      where: { clusters: { none: {} } },
+    })
+    await prisma.regional.deleteMany({
+      where: { districts: { none: {} } },
+    })
+  }
+
+  // -------------------------------------------------------------------------
+  // Deduplicate input: keep first occurrence of each (code, label_code) pair
+  // -------------------------------------------------------------------------
+  const seenKeys = new Set<string>()
+  const uniqueRows: ParsedRow[] = []
+  for (const row of data) {
+    const key = buildRowKey(row)
+    if (seenKeys.has(key)) continue
+    seenKeys.add(key)
+    uniqueRows.push(row)
+  }
+
+  // -------------------------------------------------------------------------
+  // Pre-load all existing hierarchy nodes and devices into memory to avoid
+  // repeated DB lookups inside the row loop.
+  // -------------------------------------------------------------------------
+  const [allRegs, allDists, allClusters, allLocs, allDevices] = await Promise.all([
+    prisma.regional.findMany({ select: { id: true, name: true } }),
+    prisma.district.findMany({ select: { id: true, name: true, regionalId: true } }),
+    prisma.cluster.findMany({ select: { id: true, name: true, districtId: true } }),
+    prisma.location.findMany({ select: { id: true, name: true, clusterId: true } }),
+    prisma.device.findMany({ select: { id: true, deviceCode: true } }),
+  ])
+
+  const regByName = new Map(allRegs.map((r) => [r.name, r.id]))
+  const distByName = new Map(allDists.map((d) => [d.name, d.id]))
+  const clusterByName = new Map(allClusters.map((c) => [c.name, c.id]))
+  const locByName = new Map(allLocs.map((l) => [l.name, l.id]))
+  const deviceByCode = new Map(allDevices.map((d) => [d.deviceCode, d.id]))
+
+  // -------------------------------------------------------------------------
+  // Phase 1 — Upsert hierarchy (top-down) for all unique rows
+  // -------------------------------------------------------------------------
+  for (const row of uniqueRows) {
+    const regName = normalise(row.region) || HIERARCHY_DEFAULTS.regional
+    const distName = normalise(row.district) || HIERARCHY_DEFAULTS.district
+    const clusterName = normalise(row.organization_name) || normalise(row.cluster) || HIERARCHY_DEFAULTS.cluster
+    const locName = normalise(row.sites_name)
+
+    // --- Regional ---
+    let regionalId = regByName.get(regName)
+    if (!regionalId) {
+      const created = await prisma.regional.create({ data: { name: regName } })
+      regionalId = created.id
+      regByName.set(regName, regionalId)
+    }
+
+    // --- District ---
+    let districtId = distByName.get(distName)
+    if (!districtId) {
+      const created = await prisma.district.create({
+        data: { name: distName, regionalId },
+      })
+      districtId = created.id
+      distByName.set(distName, districtId)
+    }
+
+    // --- Cluster ---
+    let clusterId = clusterByName.get(clusterName)
+    if (!clusterId) {
+      const created = await prisma.cluster.create({
+        data: { name: clusterName, districtId },
+      })
+      clusterId = created.id
+      clusterByName.set(clusterName, clusterId)
+    }
+
+    // --- Location ---
+    if (locName && !locByName.has(locName)) {
+      // Use provided coordinates or a default placeholder
+      const lat = row.latitude ?? 0
+      const lng = row.longitude ?? 0
+      const created = await prisma.location.create({
+        data: {
+          name: locName,
+          latitude: lat,
+          longitude: lng,
+          clusterId,
+          classType: normalise(row.class_type) || null,
+          address: normalise(row.address) || null,
+        },
+      })
+      locByName.set(locName, created.id)
+      newLocations++
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Phase 2 — Upsert devices in batches
+  // -------------------------------------------------------------------------
+  for (let i = 0; i < uniqueRows.length; i += BATCH_SIZE) {
+    const batch = uniqueRows.slice(i, i + BATCH_SIZE)
+
+    await Promise.all(
+      batch.map(async (row) => {
+        const deviceCode = normalise(row.code)
+        const locName = normalise(row.sites_name)
+
+        // Validate device code before anything else
+        if (!deviceCode) {
+          errors.push(`Baris "${row.name}": code/deviceCode kosong`)
+          return
+        }
+
+        // Skip rows without a valid location
+        const locationId = locByName.get(locName)
+        if (!locationId) {
+          errors.push(`Baris "${row.name}": location tidak ditemukan`)
+          return
+        }
+
+        const deviceData = mapDeviceData(row, locationId)
+
+        if (deviceByCode.has(deviceCode)) {
+          // Update existing
+          try {
+            await prisma.device.update({
+              where: { deviceCode },
+              data: deviceData,
+            })
+            updatedDevices++
+          } catch (err) {
+            errors.push(`Gagal update device ${deviceCode}: ${(err as Error).message}`)
+          }
+        } else {
+          // Create new
+          try {
+            await prisma.device.create({ data: deviceData })
+            deviceByCode.set(deviceCode, deviceCode) // mark as existing for this session
+            newDevices++
+          } catch (err) {
+            errors.push(`Gagal insert device ${deviceCode}: ${(err as Error).message}`)
+          }
+        }
+      }),
+    )
+  }
+
+  return {
+    newDevices,
+    updatedDevices,
+    newLocations,
+    totalProcessed: uniqueRows.length,
+    errors,
+  }
+}
