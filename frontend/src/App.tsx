@@ -11,9 +11,9 @@ import ProtectedRoute from './components/layout/ProtectedRoute'
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <MapProvider>
-          <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
+          <MapProvider>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route
@@ -39,9 +39,9 @@ function App() {
                 },
               }}
             />
-          </BrowserRouter>
-        </MapProvider>
-      </AuthProvider>
+          </MapProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }
