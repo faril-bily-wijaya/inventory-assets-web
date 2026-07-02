@@ -6,82 +6,91 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  fullName  String?
-  role      Role     @default(USER)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model users {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  username   String   @unique @map("username") @db.VarChar(50)
+  email      String   @unique @map("email") @db.VarChar(255)
+  password   String   @map("password") @db.VarChar(255)
+  full_name  String?  @map("full_name") @db.VarChar(255)
+  role       String   @default("USER") @map("role") @db.VarChar(20)
+  is_active  Boolean  @default(true) @map("is_active")
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@map("users")
 }
 
-model Regional {
-  id        String    @id @default(cuid())
-  name      String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  districts District[]
+model regionals {
+  id         String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String      @map("name") @db.VarChar(100)
+  created_at DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  districts  districts[]
+
+  @@map("regionals")
 }
 
-model District {
-  id         String     @id @default(cuid())
-  name       String
-  regionalId String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  regional   Regional   @relation(fields: [regionalId], references: [id])
-  clusters   Cluster[]
+model districts {
+  id          String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String      @map("name") @db.VarChar(100)
+  regional_id String      @map("regional_id") @db.Uuid
+  created_at  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  regional    regionals    @relation(fields: [regional_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  clusters    clusters[]
+
+  @@map("districts")
+  @@unique([name, regional_id])
 }
 
-model Cluster {
-  id         String     @id @default(cuid())
-  name       String
-  districtId String
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  district   District   @relation(fields: [districtId], references: [id])
-  locations  Location[]
+model clusters {
+  id          String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String      @map("name") @db.VarChar(100)
+  district_id String      @map("district_id") @db.Uuid
+  created_at  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  district    districts   @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  locations   locations[]
+
+  @@map("clusters")
+  @@unique([name, district_id])
 }
 
-model Location {
-  id         String   @id @default(cuid())
-  name       String
-  latitude   Float
-  longitude  Float
-  clusterId  String
-  classType  String?
-  address    String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  cluster    Cluster  @relation(fields: [clusterId], references: [id])
-  devices    Device[]
+model locations {
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String    @unique @map("name") @db.VarChar(255)
+  latitude   Float     @map("latitude")
+  longitude  Float     @map("longitude")
+  cluster_id String?   @map("cluster_id") @db.Uuid
+  class_type String    @default("BASIC") @map("class_type") @db.VarChar(20)
+  address    String?   @map("address")
+  created_at DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  cluster    clusters?  @relation(fields: [cluster_id], references: [id], onUpdate: NoAction)
+  devices    devices[]
+
+  @@map("locations")
 }
 
-model Device {
-  id           String    @id @default(cuid())
-  deviceCode   String    @unique
-  deviceName   String
-  deviceType   String
-  brand        String?
-  model        String?
-  serialNumber String?
-  kapasitas    String?
-  year         Int?
-  room         String?
-  status       String    @default("active")
-  condition    String?
-  capReal      String?
-  locationId   String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
-  location     Location  @relation(fields: [locationId], references: [id])
-}
+model devices {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  device_code   String?   @unique @map("device_code") @db.VarChar(100)
+  device_name   String    @map("device_name") @db.VarChar(255)
+  device_type   String    @map("device_type") @db.VarChar(50)
+  brand         String?   @map("brand") @db.VarChar(100)
+  model         String?   @map("model") @db.VarChar(100)
+  serial_number String?   @map("serial_number") @db.VarChar(100)
+  kapasitas     String?   @map("kapasitas") @db.VarChar(50)
+  year          Int?      @map("year")
+  room          String?   @map("room") @db.VarChar(100)
+  status       String    @default("OPERATIONAL") @map("status") @db.VarChar(30)
+  condition     String?   @map("condition") @db.VarChar(50)
+  cap_real      String?   @map("cap_real") @db.VarChar(50)
+  location_id   String    @map("location_id") @db.Uuid
+  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deleted_at    DateTime? @map("deleted_at") @db.Timestamptz(6)
+  locations     locations  @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-enum Role {
-  ADMIN
-  USER
+  @@map("devices")
 }

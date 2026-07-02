@@ -28,10 +28,10 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
 
     const user = await prisma.users.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, username: true, role: true, isActive: true },
+      select: { id: true, username: true, role: true, is_active: true },
     })
 
-    if (!user || !user.isActive) {
+    if (!user || !user.is_active) {
       return res.status(401).json({ error: 'User not found or inactive' })
     }
 

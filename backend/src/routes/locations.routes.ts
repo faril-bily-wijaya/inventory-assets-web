@@ -21,22 +21,22 @@ router.get('/', async (req, res) => {
   try {
     const { clusterId, districtId, regionalId } = req.query
     const where: any = {}
-    if (clusterId) where.clusterId = clusterId as string
-    if (districtId) where.cluster = { districtId: districtId as string }
-    if (regionalId) where.cluster = { district: { regionalId: regionalId as string } }
+    if (clusterId) where.cluster_id = clusterId as string
+    if (districtId) where.clusters = { districts: { id: districtId as string } }
+    if (regionalId) where.clusters = { districts: { regionals: { id: regionalId as string } } }
 
     const locations = await prisma.locations.findMany({
       where,
       include: {
-        cluster: {
+        clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
         _count: {
-          select: { devices: { where: { deletedAt: null } } }
+          select: { devices: { where: { deleted_at: null } } }
         }
       },
       orderBy: { name: 'asc' },
@@ -53,20 +53,20 @@ router.get('/map-data', async (req, res) => {
   try {
     const locations = await prisma.locations.findMany({
       include: {
-        cluster: {
+        clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
         devices: {
-          where: { deletedAt: null },
+          where: { deleted_at: null },
           select: {
             id: true,
-            deviceCode: true,
-            deviceName: true,
-            deviceType: true,
+            device_code: true,
+            device_name: true,
+            device_type: true,
             status: true,
             condition: true,
           },
@@ -92,13 +92,13 @@ router.get('/map-data', async (req, res) => {
         latitude: loc.latitude,
         longitude: loc.longitude,
         address: loc.address,
-        classType: loc.classType,
+        class_type: loc.class_type,
         deviceCount: loc.devices.length,
         devices: loc.devices,
         hierarchy: {
-          regional: loc.cluster.district.regional.name,
-          district: loc.cluster.district.name,
-          cluster: loc.cluster.name,
+          regional: loc.clusters.districts.regionals.name,
+          district: loc.clusters.districts.name,
+          cluster: loc.clusters.name,
         },
         worstStatus,
       }
@@ -117,15 +117,15 @@ router.get('/:id', async (req, res) => {
     const location = await prisma.locations.findUnique({
       where: { id: req.params.id },
       include: {
-        cluster: {
+        clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
         devices: {
-          where: { deletedAt: null }
+          where: { deleted_at: null }
         },
       },
     })
@@ -214,8 +214,8 @@ router.get('/:id/devices', async (req, res) => {
     }
 
     // Get all devices for this location (excluding deleted)
-    const devices = await prisma.device.findMany({
-      where: { locationId: id, deletedAt: null },
+    const devices = await prisma.devices.findMany({
+      where: { location_id: id, deleted_at: null },
     })
 
     // Categorize and add modernization info
@@ -232,11 +232,11 @@ router.get('/:id/devices', async (req, res) => {
 
       const deviceWithModernization = {
         id: device.id,
-        deviceCode: device.deviceCode,
-        deviceName: device.deviceName,
-        deviceType: device.deviceType,
+        device_code: device.device_code,
+        device_name: device.device_name,
+        device_type: device.device_type,
         brand: device.brand,
-        serialNumber: device.serialNumber,
+        serial_number: device.serial_number,
         kapasitas: device.kapasitas,
         year: device.year,
         status: device.status,
@@ -259,11 +259,11 @@ router.get('/:id/devices', async (req, res) => {
         latitude: location.latitude,
         longitude: location.longitude,
         address: location.address,
-        classType: location.classType,
+        class_type: location.class_type,
         hierarchy: {
-          regional: location.cluster?.district?.regional?.name,
-          district: location.cluster?.district?.name,
-          cluster: location.cluster?.name,
+          regional: location.clusters?.districts?.regionals?.name,
+          district: location.clusters?.districts?.name,
+          cluster: location.clusters?.name,
         },
       },
       devices: {

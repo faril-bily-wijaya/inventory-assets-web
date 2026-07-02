@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    if (!user.isActive) {
+    if (!user.is_active) {
       return res.status(401).json({ error: 'Account is inactive' })
     }
 
@@ -67,7 +67,7 @@ router.post('/login', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        fullName: user.fullName,
+        full_name: user.full_name,
         role: user.role,
       },
     })
@@ -102,7 +102,7 @@ router.post('/register', async (req, res) => {
         username: data.username,
         email: data.email,
         password: hashedPassword,
-        fullName: data.fullName,
+        full_name: data.fullName,
         role: 'USER',
       },
     })
@@ -119,7 +119,7 @@ router.post('/register', async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        fullName: user.fullName,
+        full_name: user.full_name,
         role: user.role,
       },
     })
@@ -140,9 +140,9 @@ router.get('/me', authMiddleware, async (req: any, res) => {
         id: true,
         username: true,
         email: true,
-        fullName: true,
+        full_name: true,
         role: true,
-        createdAt: true,
+        created_at: true,
       },
     })
 

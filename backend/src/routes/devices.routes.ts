@@ -34,29 +34,29 @@ router.get('/', async (req, res) => {
     const limitNum = parseInt(limit as string)
     const skip = (pageNum - 1) * limitNum
 
-    const where: any = { deletedAt: null }
+    const where: any = { deleted_at: null }
 
     if (search) {
       where.OR = [
-        { deviceCode: { contains: search as string, mode: 'insensitive' } },
-        { deviceName: { contains: search as string, mode: 'insensitive' } },
-        { serialNumber: { contains: search as string, mode: 'insensitive' } },
+        { device_code: { contains: search as string, mode: 'insensitive' } },
+        { device_name: { contains: search as string, mode: 'insensitive' } },
+        { serial_number: { contains: search as string, mode: 'insensitive' } },
       ]
     }
     if (status) where.status = status
-    if (deviceType) where.deviceType = deviceType
-    if (locationId) where.locationId = locationId
+    if (deviceType) where.device_type = deviceType
+    if (locationId) where.location_id = locationId
 
     const [devices, total] = await Promise.all([
       prisma.devices.findMany({
         where,
         include: {
-          location: {
+          locations: {
             include: {
-              cluster: {
+              clusters: {
                 include: {
-                  district: {
-                    include: { regional: true }
+                  districts: {
+                    include: { regionals: true }
                   }
                 }
               }
@@ -65,7 +65,7 @@ router.get('/', async (req, res) => {
         },
         skip,
         take: limitNum,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
       }),
       prisma.devices.count({ where }),
     ])
@@ -89,16 +89,16 @@ router.get('/', async (req, res) => {
 router.get('/stats', async (req, res) => {
   try {
     const [total, byStatus, byType] = await Promise.all([
-      prisma.devices.count({ where: { deletedAt: null } }),
+      prisma.devices.count({ where: { deleted_at: null } }),
       prisma.devices.groupBy({
         by: ['status'],
-        where: { deletedAt: null },
+        where: { deleted_at: null },
         _count: { status: true },
       }),
       prisma.devices.groupBy({
-        by: ['deviceType'],
-        where: { deletedAt: null },
-        _count: { deviceType: true },
+        by: ['device_type'],
+        where: { deleted_at: null },
+        _count: { device_type: true },
       }),
     ])
 
@@ -109,7 +109,7 @@ router.get('/stats', async (req, res) => {
 
     const byTypeMap: Record<string, number> = {}
     byType.forEach(item => {
-      byTypeMap[item.deviceType] = item._count.deviceType
+      byTypeMap[item.device_type] = item._count.device_type
     })
 
     res.json({
@@ -129,12 +129,12 @@ router.get('/:id', async (req, res) => {
     const device = await prisma.devices.findUnique({
       where: { id: req.params.id },
       include: {
-        location: {
+        locations: {
           include: {
-            cluster: {
+            clusters: {
               include: {
-                district: {
-                  include: { regional: true }
+                districts: {
+                  include: { regionals: true }
                 }
               }
             }
@@ -142,7 +142,7 @@ router.get('/:id', async (req, res) => {
         }
       },
     })
-    if (!device || device.deletedAt) {
+    if (!device || device.deleted_at) {
       return res.status(404).json({ error: 'Device not found' })
     }
     res.json({ device })
@@ -157,7 +157,7 @@ router.post('/', async (req, res) => {
   try {
     const data = deviceSchema.parse(req.body)
     const existing = await prisma.devices.findUnique({
-      where: { deviceCode: data.deviceCode },
+      where: { device_code: data.deviceCode },
     })
     if (existing) {
       return res.status(400).json({ error: 'Device code already exists' })
@@ -194,7 +194,7 @@ router.delete('/:id', async (req, res) => {
   try {
     await prisma.devices.update({
       where: { id: req.params.id },
-      data: { deletedAt: new Date() },
+      data: { deleted_at: new Date() },
     })
     res.json({ success: true })
   } catch (error) {
@@ -209,7 +209,7 @@ router.post('/bulk-delete', async (req, res) => {
     const { ids } = req.body
     await prisma.devices.updateMany({
       where: { id: { in: ids } },
-      data: { deletedAt: new Date() },
+      data: { deleted_at: new Date() },
     })
     res.json({ success: true, count: ids.length })
   } catch (error) {

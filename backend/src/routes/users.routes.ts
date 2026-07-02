@@ -14,13 +14,13 @@ router.get('/', adminOnly, async (req, res) => {
         id: true,
         username: true,
         email: true,
-        fullName: true,
+        full_name: true,
         role: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
+        is_active: true,
+        created_at: true,
+        updated_at: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { created_at: 'desc' },
     })
 
     res.json({ users })
@@ -46,7 +46,7 @@ router.put('/:id/role', adminOnly, async (req, res) => {
         username: true,
         email: true,
         role: true,
-        isActive: true,
+        is_active: true,
       },
     })
 
@@ -59,17 +59,17 @@ router.put('/:id/role', adminOnly, async (req, res) => {
 // PUT /api/users/:id/active
 router.put('/:id/active', adminOnly, async (req, res) => {
   try {
-    const { isActive } = req.body
+    const { is_active } = req.body
 
     const user = await prisma.users.update({
       where: { id: req.params.id as string },
-      data: { isActive },
+      data: { is_active },
       select: {
         id: true,
         username: true,
         email: true,
         role: true,
-        isActive: true,
+        is_active: true,
       },
     })
 
@@ -84,7 +84,7 @@ router.delete('/:id', adminOnly, async (req, res) => {
   try {
     await prisma.users.update({
       where: { id: req.params.id as string },
-      data: { isActive: false },
+      data: { is_active: false },
     })
 
     res.json({ success: true })
