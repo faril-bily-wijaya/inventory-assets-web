@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
     const locations = await prisma.locations.findMany({
       where,
       include: {
-        cluster: {
+        clusters: {
           include: {
             district: {
               include: { regional: true }
@@ -51,7 +51,7 @@ router.get('/map-data', async (req, res) => {
   try {
     const locations = await prisma.locations.findMany({
       include: {
-        cluster: {
+        clusters: {
           include: {
             district: {
               include: { regional: true }
@@ -84,9 +84,9 @@ router.get('/map-data', async (req, res) => {
         deviceCount: loc.devices.length,
         devices: loc.devices,
         hierarchy: {
-          regional: loc.cluster?.district?.regional?.name,
-          district: loc.cluster?.district?.name,
-          cluster: loc.cluster?.name,
+          regional: loc.clusters?.district?.regional?.name,
+          district: loc.clusters?.district?.name,
+          cluster: loc.clusters?.name,
         },
         worstStatus,
       }
@@ -105,7 +105,7 @@ router.get('/:id', async (req, res) => {
     const location = await prisma.locations.findUnique({
       where: { id: req.params.id },
       include: {
-        cluster: {
+        clusters: {
           include: {
             district: {
               include: { regional: true }
