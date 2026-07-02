@@ -8,38 +8,44 @@ import DashboardPage from './pages/DashboardPage'
 import DevicesPage from './pages/DevicesPage'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
+function ProtectedLayout() {
+  return (
+    <MapProvider>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/devices" element={<DevicesPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </MapProvider>
+  )
+}
+
 function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
         <AuthProvider>
-          <MapProvider>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                path="/*"
-                element={
-                  <ProtectedRoute>
-                    <Routes>
-                      <Route path="/" element={<DashboardPage />} />
-                      <Route path="/devices" element={<DevicesPage />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                style: {
-                  background: 'var(--bg-card)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border)',
-                },
-              }}
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout />
+                </ProtectedRoute>
+              }
             />
-          </MapProvider>
+          </Routes>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border)',
+              },
+            }}
+          />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
