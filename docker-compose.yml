@@ -16,9 +16,7 @@ services:
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcW16bG5oY3VseXFmbGJidWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjkyNDgsImV4cCI6MjA5ODM0NTI0OH0.WIQHauPvG7sJswokpC_-wF8BtJrdXBr2qc5bbqRVkfo}
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcW16bG5oY3VseXFmbGJidWxxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4Mjc2OTI0OCwiZXhwIjoyMDk4MzQ1MjQ4fQ.X-f5ScV_h8v6kvw8zFk_06K3GD7M4jTXNwgz2nG-C0w}
       - SUPABASE_PROJECT_REF=${SUPABASE_PROJECT_REF:-epqmzlnhculyqflbbulq}
-      - FRONTEND_URL=${FRONTEND_URL:-http://124.156.204.209}
-    ports:
-      - "8080:8080"
+      - FRONTEND_URL=${FRONTEND_URL:-http://124.156.204.209:8080}
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/health"]
       interval: 30s
@@ -40,7 +38,7 @@ services:
     container_name: inventory-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
     networks:
