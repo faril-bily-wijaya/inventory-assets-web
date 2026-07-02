@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8080
-      - DATABASE_URL=${DATABASE_URL:-postgresql://postgres:Inventoryassetsweb@db.epqmzlnhculyqflbbulq.supabase.co:5432/postgres}
+      - DATABASE_URL=${DATABASE_URL}
       - JWT_SECRET=${JWT_SECRET:-inventory-web-jwt-secret-2024}
       - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcW16bG5oY3VseXFmbGJidWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjkyNDgsImV4cCI6MjA5ODM0NTI0OH0.WIQHauPvG7sJswokpC_-wF8BtJrdXBr2qc5bbqRVkfo}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcW16bG5oY3VseXFmbGJidWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI3NjkyNDgsImV4cCI6MjA5ODM0NTI0OH0.WIQHauPvG7sJswokpC_-wF8BtJrdXBr2qc5bbqRVkfo}
@@ -30,6 +30,8 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    extra_hosts:
+      - "db.epqmzlnhculyqflbbulq.supabase.co:54.169.124.116"
 
   frontend:
     build:
