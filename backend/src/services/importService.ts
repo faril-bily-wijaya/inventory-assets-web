@@ -160,7 +160,7 @@ export async function generateImportPreview(
   }
 
   // --- 3. Check which device codes already exist ---
-  const existingCodes = await prisma.device.findMany({
+  const existingCodes = await prisma.devices.findMany({
     where: { deviceCode: { in: [...deviceCodeSet] } },
     select: { deviceCode: true },
   })
@@ -168,10 +168,10 @@ export async function generateImportPreview(
 
   // --- 4. Check which hierarchy names already exist ---
   const [existingRegs, existingDists, existingClusters, existingLocs] = await Promise.all([
-    prisma.regional.findMany({ where: { name: { in: [...regionalNames] } }, select: { name: true } }),
-    prisma.district.findMany({ where: { name: { in: [...districtNames] } }, select: { name: true } }),
-    prisma.cluster.findMany({ where: { name: { in: [...clusterNames] } }, select: { name: true } }),
-    prisma.location.findMany({ where: { name: { in: [...locationNames] } }, select: { name: true } }),
+    prisma.regionals.findMany({ where: { name: { in: [...regionalNames] } }, select: { name: true } }),
+    prisma.districts.findMany({ where: { name: { in: [...districtNames] } }, select: { name: true } }),
+    prisma.clusters.findMany({ where: { name: { in: [...clusterNames] } }, select: { name: true } }),
+    prisma.locations.findMany({ where: { name: { in: [...locationNames] } }, select: { name: true } }),
   ])
 
   const existingRegSet = new Set(existingRegs.map((r) => r.name))
@@ -237,18 +237,18 @@ export async function executeImport(
   // Replace mode: wipe existing devices and locations
   // -------------------------------------------------------------------------
   if (mode === 'replace') {
-    await prisma.device.updateMany({ data: { deletedAt: new Date() } })
-    await prisma.location.deleteMany({})
+    await prisma.devices.updateMany({ data: { deletedAt: new Date() } })
+    await prisma.locations.deleteMany({})
 
     // Cascade: delete empty clusters, districts, regionals
     // (only if they have no remaining children)
-    await prisma.cluster.deleteMany({
+    await prisma.clusters.deleteMany({
       where: { locations: { none: {} } },
     })
-    await prisma.district.deleteMany({
+    await prisma.districts.deleteMany({
       where: { clusters: { none: {} } },
     })
-    await prisma.regional.deleteMany({
+    await prisma.regionals.deleteMany({
       where: { districts: { none: {} } },
     })
   }
@@ -270,11 +270,11 @@ export async function executeImport(
   // repeated DB lookups inside the row loop.
   // -------------------------------------------------------------------------
   const [allRegs, allDists, allClusters, allLocs, allDevices] = await Promise.all([
-    prisma.regional.findMany({ select: { id: true, name: true } }),
-    prisma.district.findMany({ select: { id: true, name: true, regionalId: true } }),
-    prisma.cluster.findMany({ select: { id: true, name: true, districtId: true } }),
-    prisma.location.findMany({ select: { id: true, name: true, clusterId: true } }),
-    prisma.device.findMany({ select: { id: true, deviceCode: true } }),
+    prisma.regionals.findMany({ select: { id: true, name: true } }),
+    prisma.districts.findMany({ select: { id: true, name: true, regionalId: true } }),
+    prisma.clusters.findMany({ select: { id: true, name: true, districtId: true } }),
+    prisma.locations.findMany({ select: { id: true, name: true, clusterId: true } }),
+    prisma.devices.findMany({ select: { id: true, deviceCode: true } }),
   ])
 
   const regByName = new Map(allRegs.map((r) => [r.name, r.id]))
@@ -295,7 +295,7 @@ export async function executeImport(
     // --- Regional ---
     let regionalId = regByName.get(regName)
     if (!regionalId) {
-      const created = await prisma.regional.create({ data: { name: regName } })
+      const created = await prisma.regionals.create({ data: { name: regName } })
       regionalId = created.id
       regByName.set(regName, regionalId)
     }
@@ -303,7 +303,7 @@ export async function executeImport(
     // --- District ---
     let districtId = distByName.get(distName)
     if (!districtId) {
-      const created = await prisma.district.create({
+      const created = await prisma.districts.create({
         data: { name: distName, regionalId },
       })
       districtId = created.id
@@ -313,7 +313,7 @@ export async function executeImport(
     // --- Cluster ---
     let clusterId = clusterByName.get(clusterName)
     if (!clusterId) {
-      const created = await prisma.cluster.create({
+      const created = await prisma.clusters.create({
         data: { name: clusterName, districtId },
       })
       clusterId = created.id
@@ -325,7 +325,7 @@ export async function executeImport(
       // Use provided coordinates or a default placeholder
       const lat = row.latitude ?? 0
       const lng = row.longitude ?? 0
-      const created = await prisma.location.create({
+      const created = await prisma.locations.create({
         data: {
           name: locName,
           latitude: lat,
@@ -369,7 +369,7 @@ export async function executeImport(
         if (deviceByCode.has(deviceCode)) {
           // Update existing
           try {
-            await prisma.device.update({
+            await prisma.devices.update({
               where: { deviceCode },
               data: deviceData,
             })
@@ -380,7 +380,7 @@ export async function executeImport(
         } else {
           // Create new
           try {
-            await prisma.device.create({ data: deviceData })
+            await prisma.devices.create({ data: deviceData })
             deviceByCode.set(deviceCode, deviceCode) // mark as existing for this session
             newDevices++
           } catch (err) {

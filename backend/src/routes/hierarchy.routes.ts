@@ -9,7 +9,7 @@ router.use(authMiddleware)
 router.get('/', async (req, res) => {
   try {
     const [regionals, districts, clusters] = await Promise.all([
-      prisma.regional.findMany({
+      prisma.regionals.findMany({
         include: {
           districts: {
             include: {
@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
         },
         orderBy: { name: 'asc' },
       }),
-      prisma.district.findMany({
+      prisma.districts.findMany({
         include: {
           regional: true,
           clusters: {
@@ -31,7 +31,7 @@ router.get('/', async (req, res) => {
         },
         orderBy: { name: 'asc' },
       }),
-      prisma.cluster.findMany({
+      prisma.clusters.findMany({
         include: {
           district: {
             include: { regional: true }
@@ -52,7 +52,7 @@ router.get('/', async (req, res) => {
 router.post('/regionals', async (req, res) => {
   try {
     const { name } = req.body
-    const regional = await prisma.regional.create({ data: { name } })
+    const regional = await prisma.regionals.create({ data: { name } })
     res.status(201).json({ regional })
   } catch (error) {
     console.error('Error creating regional:', error)
@@ -64,7 +64,7 @@ router.post('/regionals', async (req, res) => {
 router.post('/districts', async (req, res) => {
   try {
     const { name, regionalId } = req.body
-    const district = await prisma.district.create({
+    const district = await prisma.districts.create({
       data: { name, regionalId },
       include: { regional: true },
     })
@@ -79,7 +79,7 @@ router.post('/districts', async (req, res) => {
 router.post('/clusters', async (req, res) => {
   try {
     const { name, districtId } = req.body
-    const cluster = await prisma.cluster.create({
+    const cluster = await prisma.clusters.create({
       data: { name, districtId },
       include: {
         district: {

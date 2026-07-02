@@ -26,7 +26,7 @@ export async function authMiddleware(req: AuthRequest, res: Response, next: Next
       role: string
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: decoded.userId },
       select: { id: true, username: true, role: true, isActive: true },
     })

@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     if (locationId) where.locationId = locationId
 
     const [devices, total] = await Promise.all([
-      prisma.device.findMany({
+      prisma.devices.findMany({
         where,
         include: {
           location: {
@@ -67,7 +67,7 @@ router.get('/', async (req, res) => {
         take: limitNum,
         orderBy: { createdAt: 'desc' },
       }),
-      prisma.device.count({ where }),
+      prisma.devices.count({ where }),
     ])
 
     res.json({
@@ -89,13 +89,13 @@ router.get('/', async (req, res) => {
 router.get('/stats', async (req, res) => {
   try {
     const [total, byStatus, byType] = await Promise.all([
-      prisma.device.count({ where: { deletedAt: null } }),
-      prisma.device.groupBy({
+      prisma.devices.count({ where: { deletedAt: null } }),
+      prisma.devices.groupBy({
         by: ['status'],
         where: { deletedAt: null },
         _count: { status: true },
       }),
-      prisma.device.groupBy({
+      prisma.devices.groupBy({
         by: ['deviceType'],
         where: { deletedAt: null },
         _count: { deviceType: true },
@@ -126,7 +126,7 @@ router.get('/stats', async (req, res) => {
 // GET /api/devices/:id
 router.get('/:id', async (req, res) => {
   try {
-    const device = await prisma.device.findUnique({
+    const device = await prisma.devices.findUnique({
       where: { id: req.params.id },
       include: {
         location: {
@@ -156,13 +156,13 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const data = deviceSchema.parse(req.body)
-    const existing = await prisma.device.findUnique({
+    const existing = await prisma.devices.findUnique({
       where: { deviceCode: data.deviceCode },
     })
     if (existing) {
       return res.status(400).json({ error: 'Device code already exists' })
     }
-    const device = await prisma.device.create({ data })
+    const device = await prisma.devices.create({ data })
     res.status(201).json({ device })
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -176,7 +176,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const data = deviceSchema.partial().parse(req.body)
-    const device = await prisma.device.update({
+    const device = await prisma.devices.update({
       where: { id: req.params.id },
       data,
     })
@@ -192,7 +192,7 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/devices/:id
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.device.update({
+    await prisma.devices.update({
       where: { id: req.params.id },
       data: { deletedAt: new Date() },
     })
@@ -207,7 +207,7 @@ router.delete('/:id', async (req, res) => {
 router.post('/bulk-delete', async (req, res) => {
   try {
     const { ids } = req.body
-    await prisma.device.updateMany({
+    await prisma.devices.updateMany({
       where: { id: { in: ids } },
       data: { deletedAt: new Date() },
     })

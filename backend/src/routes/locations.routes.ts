@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
     if (districtId) where.cluster = { districtId: districtId as string }
     if (regionalId) where.cluster = { district: { regionalId: regionalId as string } }
 
-    const locations = await prisma.location.findMany({
+    const locations = await prisma.locations.findMany({
       where,
       include: {
         cluster: {
@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
 // GET /api/locations/map-data
 router.get('/map-data', async (req, res) => {
   try {
-    const locations = await prisma.location.findMany({
+    const locations = await prisma.locations.findMany({
       include: {
         cluster: {
           include: {
@@ -114,7 +114,7 @@ router.get('/map-data', async (req, res) => {
 // GET /api/locations/:id
 router.get('/:id', async (req, res) => {
   try {
-    const location = await prisma.location.findUnique({
+    const location = await prisma.locations.findUnique({
       where: { id: req.params.id },
       include: {
         cluster: {
@@ -143,7 +143,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const data = locationSchema.parse(req.body)
-    const location = await prisma.location.create({ data })
+    const location = await prisma.locations.create({ data })
     res.status(201).json({ location })
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -157,7 +157,7 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const data = locationSchema.partial().parse(req.body)
-    const location = await prisma.location.update({
+    const location = await prisma.locations.update({
       where: { id: req.params.id },
       data,
     })
@@ -173,7 +173,7 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/locations/:id
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.location.delete({
+    await prisma.locations.delete({
       where: { id: req.params.id },
     })
     res.json({ success: true })
@@ -196,7 +196,7 @@ router.get('/:id/devices', async (req, res) => {
     const { id } = req.params
 
     // Get location with hierarchy
-    const location = await prisma.location.findUnique({
+    const location = await prisma.locations.findUnique({
       where: { id },
       include: {
         cluster: {

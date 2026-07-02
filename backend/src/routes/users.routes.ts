@@ -9,7 +9,7 @@ router.use(authMiddleware)
 // GET /api/users
 router.get('/', adminOnly, async (req, res) => {
   try {
-    const users = await prisma.user.findMany({
+    const users = await prisma.users.findMany({
       select: {
         id: true,
         username: true,
@@ -38,7 +38,7 @@ router.put('/:id/role', adminOnly, async (req, res) => {
       return res.status(400).json({ error: 'Invalid role' })
     }
 
-    const user = await prisma.user.update({
+    const user = await prisma.users.update({
       where: { id: req.params.id as string },
       data: { role },
       select: {
@@ -61,7 +61,7 @@ router.put('/:id/active', adminOnly, async (req, res) => {
   try {
     const { isActive } = req.body
 
-    const user = await prisma.user.update({
+    const user = await prisma.users.update({
       where: { id: req.params.id as string },
       data: { isActive },
       select: {
@@ -82,7 +82,7 @@ router.put('/:id/active', adminOnly, async (req, res) => {
 // DELETE /api/users/:id
 router.delete('/:id', adminOnly, async (req, res) => {
   try {
-    await prisma.user.update({
+    await prisma.users.update({
       where: { id: req.params.id as string },
       data: { isActive: false },
     })

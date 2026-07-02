@@ -32,7 +32,7 @@ router.post('/login', async (req, res) => {
     const { username, password } = loginSchema.parse(req.body)
     log('[AUTH] Parsed:', username)
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { username },
     })
     log('[AUTH] User found:', !!user)
@@ -85,7 +85,7 @@ router.post('/register', async (req, res) => {
   try {
     const data = registerSchema.parse(req.body)
 
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [{ username: data.username }, { email: data.email }],
       },
@@ -97,7 +97,7 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(data.password, 10)
 
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         username: data.username,
         email: data.email,
@@ -134,7 +134,7 @@ router.post('/register', async (req, res) => {
 // GET /api/auth/me
 router.get('/me', authMiddleware, async (req: any, res) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: req.user.id },
       select: {
         id: true,
