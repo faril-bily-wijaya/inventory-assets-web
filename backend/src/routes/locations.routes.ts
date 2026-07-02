@@ -22,16 +22,16 @@ router.get('/', async (req, res) => {
     const { clusterId, districtId, regionalId } = req.query
     const where: any = {}
     if (clusterId) where.cluster_id = clusterId as string
-    if (districtId) where.clusters = { districts: { id: districtId as string } }
-    if (regionalId) where.clusters = { districts: { regionals: { id: regionalId as string } } }
+    if (districtId) where.cluster = { district: { id: districtId as string } }
+    if (regionalId) where.cluster = { district: { regional: { id: regionalId as string } } }
 
     const locations = await prisma.locations.findMany({
       where,
       include: {
-        clusters: {
+        cluster: {
           include: {
-            districts: {
-              include: { regionals: true }
+            district: {
+              include: { regional: true }
             }
           }
         },
@@ -53,10 +53,10 @@ router.get('/map-data', async (req, res) => {
   try {
     const locations = await prisma.locations.findMany({
       include: {
-        clusters: {
+        cluster: {
           include: {
-            districts: {
-              include: { regionals: true }
+            district: {
+              include: { regional: true }
             }
           }
         },
@@ -96,9 +96,9 @@ router.get('/map-data', async (req, res) => {
         deviceCount: loc.devices.length,
         devices: loc.devices,
         hierarchy: {
-          regional: loc.clusters.districts.regionals.name,
-          district: loc.clusters.districts.name,
-          cluster: loc.clusters.name,
+          regional: loc.cluster?.district?.regional?.name,
+          district: loc.cluster?.district?.name,
+          cluster: loc.cluster?.name,
         },
         worstStatus,
       }
@@ -117,10 +117,10 @@ router.get('/:id', async (req, res) => {
     const location = await prisma.locations.findUnique({
       where: { id: req.params.id },
       include: {
-        clusters: {
+        cluster: {
           include: {
-            districts: {
-              include: { regionals: true }
+            district: {
+              include: { regional: true }
             }
           }
         },
@@ -223,12 +223,12 @@ router.get('/:id/devices', async (req, res) => {
     const nonCatuDayaItems: any[] = []
 
     for (const device of devices) {
-      const deviceType = device.deviceType.toUpperCase()
-      const isCatuDaya = CATU_DAYA_TYPES.some(t => deviceType.includes(t))
+      const device_type = device.device_type.toUpperCase()
+      const isCatuDaya = CATU_DAYA_TYPES.some(t => device_type.includes(t))
 
       // Calculate modernization using the utility
       const tahunOperasi = device.year || new Date().getFullYear()
-      const modernization = hitungButuhModernisasi(deviceType, tahunOperasi)
+      const modernization = hitungButuhModernisasi(device_type, tahunOperasi)
 
       const deviceWithModernization = {
         id: device.id,
@@ -261,9 +261,9 @@ router.get('/:id/devices', async (req, res) => {
         address: location.address,
         class_type: location.class_type,
         hierarchy: {
-          regional: location.clusters?.districts?.regionals?.name,
-          district: location.clusters?.districts?.name,
-          cluster: location.clusters?.name,
+          regional: location.cluster?.district?.regional?.name,
+          district: location.cluster?.district?.name,
+          cluster: location.cluster?.name,
         },
       },
       devices: {

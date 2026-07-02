@@ -51,12 +51,12 @@ router.get('/', async (req, res) => {
       prisma.devices.findMany({
         where,
         include: {
-          locations: {
+          location: {
             include: {
-              clusters: {
+              cluster: {
                 include: {
-                  districts: {
-                    include: { regionals: true }
+                  district: {
+                    include: { regional: true }
                   }
                 }
               }
@@ -162,7 +162,23 @@ router.post('/', async (req, res) => {
     if (existing) {
       return res.status(400).json({ error: 'Device code already exists' })
     }
-    const device = await prisma.devices.create({ data })
+    const device = await prisma.devices.create({
+      data: {
+        device_code: data.deviceCode,
+        device_name: data.deviceName,
+        device_type: data.deviceType,
+        brand: data.brand,
+        model: data.model,
+        serial_number: data.serialNumber,
+        kapasitas: data.kapasitas,
+        year: data.year,
+        room: data.room,
+        status: data.status,
+        condition: data.condition,
+        cap_real: data.capReal,
+        location_id: data.locationId,
+      }
+    })
     res.status(201).json({ device })
   } catch (error) {
     if (error instanceof z.ZodError) {

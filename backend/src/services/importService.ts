@@ -293,11 +293,11 @@ export async function executeImport(
     const locName = normalise(row.sites_name)
 
     // --- Regional ---
-    let regionalId = regByName.get(regName)
-    if (!regionalId) {
+    let regional_id = regByName.get(regName)
+    if (!regional_id) {
       const created = await prisma.regionals.create({ data: { name: regName } })
-      regionalId = created.id
-      regByName.set(regName, regionalId)
+      regional_id = created.id
+      regByName.set(regName, regional_id)
     }
 
     // --- District ---
@@ -331,7 +331,7 @@ export async function executeImport(
           latitude: lat,
           longitude: lng,
           cluster_id,
-          class_type: normalise(row.class_type) || null,
+          class_type: normalise(row.class_type) || 'BASIC',
           address: normalise(row.address) || null,
         },
       })
@@ -375,7 +375,7 @@ export async function executeImport(
             })
             updatedDevices++
           } catch (err) {
-            errors.push(`Gagal update device ${deviceCode}: ${(err as Error).message}`)
+            errors.push(`Gagal update device ${device_code}: ${(err as Error).message}`)
           }
         } else {
           // Create new
@@ -384,7 +384,7 @@ export async function executeImport(
             deviceByCode.set(device_code, device_code) // mark as existing for this session
             newDevices++
           } catch (err) {
-            errors.push(`Gagal insert device ${deviceCode}: ${(err as Error).message}`)
+            errors.push(`Gagal insert device ${device_code}: ${(err as Error).message}`)
           }
         }
       }),
