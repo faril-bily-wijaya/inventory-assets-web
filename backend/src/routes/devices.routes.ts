@@ -51,7 +51,7 @@ router.get('/', async (req, res) => {
       prisma.devices.findMany({
         where,
         include: {
-          location: {
+          locations: {
             include: {
               cluster: {
                 include: {
@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
         skip,
         take: limitNum,
         orderBy: { created_at: 'desc' },
-      }),
+      }) as any,
       prisma.devices.count({ where }),
     ])
 
@@ -131,17 +131,17 @@ router.get('/:id', async (req, res) => {
       include: {
         locations: {
           include: {
-            clusters: {
+            cluster: {
               include: {
-                districts: {
-                  include: { regionals: true }
+                district: {
+                  include: { regional: true }
                 }
               }
             }
           }
         }
       },
-    })
+    }) as any
     if (!device || device.deleted_at) {
       return res.status(404).json({ error: 'Device not found' })
     }

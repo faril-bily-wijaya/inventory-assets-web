@@ -35,12 +35,10 @@ router.get('/', async (req, res) => {
             }
           }
         },
-        _count: {
-          select: { devices: { where: { deleted_at: null } } }
-        }
+        devices: true
       },
       orderBy: { name: 'asc' },
-    })
+    }) as any[]
     res.json({ locations })
   } catch (error) {
     console.error('Error fetching locations:', error)
@@ -60,29 +58,19 @@ router.get('/map-data', async (req, res) => {
             }
           }
         },
-        devices: {
-          where: { deleted_at: null },
-          select: {
-            id: true,
-            device_code: true,
-            device_name: true,
-            device_type: true,
-            status: true,
-            condition: true,
-          },
-        },
+        devices: true
       },
-    })
+    }) as any[]
 
-    const markers = locations.map(loc => {
-      const activeDevices = loc.devices.filter(d => d.status === 'critical')
-        .concat(loc.devices.filter(d => d.status === 'warning'))
-        .concat(loc.devices.filter(d => d.status === 'active'))
+    const markers = locations.map((loc: any) => {
+      const activeDevices = loc.devices.filter((d: any) => d.status === 'critical')
+        .concat(loc.devices.filter((d: any) => d.status === 'warning'))
+        .concat(loc.devices.filter((d: any) => d.status === 'active'))
 
       let worstStatus = 'inactive'
       if (loc.devices.length > 0) {
-        if (loc.devices.some(d => d.status === 'critical')) worstStatus = 'critical'
-        else if (loc.devices.some(d => d.status === 'warning')) worstStatus = 'warning'
+        if (loc.devices.some((d: any) => d.status === 'critical')) worstStatus = 'critical'
+        else if (loc.devices.some((d: any) => d.status === 'warning')) worstStatus = 'warning'
         else worstStatus = 'active'
       }
 
