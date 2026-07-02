@@ -36,7 +36,7 @@ model districts {
   regional_id String      @map("regional_id") @db.Uuid
   created_at  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updated_at  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  regional    regionals    @relation(fields: [regional_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  regionals   regionals   @relation(fields: [regional_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   clusters    clusters[]
 
   @@map("districts")
@@ -49,7 +49,7 @@ model clusters {
   district_id String      @map("district_id") @db.Uuid
   created_at  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updated_at  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
-  district    districts   @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  districts   districts   @relation(fields: [district_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   locations   locations[]
 
   @@map("clusters")
@@ -66,7 +66,7 @@ model locations {
   address    String?   @map("address")
   created_at DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updated_at DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  cluster    clusters?  @relation(fields: [cluster_id], references: [id], onUpdate: NoAction)
+  clusters   clusters?  @relation(fields: [cluster_id], references: [id], onUpdate: NoAction)
   devices    devices[]
 
   @@map("locations")

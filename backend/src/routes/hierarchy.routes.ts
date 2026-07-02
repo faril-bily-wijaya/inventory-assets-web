@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
       }),
       prisma.districts.findMany({
         include: {
-          regional: true,
+          regionals: true,
           clusters: {
             include: { _count: { select: { locations: true } } }
           }
@@ -33,8 +33,8 @@ router.get('/', async (req, res) => {
       }),
       prisma.clusters.findMany({
         include: {
-          district: {
-            include: { regional: true }
+          districts: {
+            include: { regionals: true }
           },
           _count: { select: { locations: true } }
         },
@@ -66,7 +66,7 @@ router.post('/districts', async (req, res) => {
     const { name, regionalId } = req.body
     const district = await prisma.districts.create({
       data: { name, regional_id: regionalId },
-      include: { regional: true },
+      include: { regionals: true },
     })
     res.status(201).json({ district })
   } catch (error) {
@@ -82,8 +82,8 @@ router.post('/clusters', async (req, res) => {
     const cluster = await prisma.clusters.create({
       data: { name, district_id: districtId },
       include: {
-        district: {
-          include: { regional: true }
+        districts: {
+          include: { regionals: true }
         }
       },
     })

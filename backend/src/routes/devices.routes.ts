@@ -53,10 +53,10 @@ router.get('/', async (req, res) => {
         include: {
           locations: {
             include: {
-              cluster: {
+              clusters: {
                 include: {
-                  district: {
-                    include: { regional: true }
+                  districts: {
+                    include: { regionals: true }
                   }
                 }
               }
@@ -131,10 +131,10 @@ router.get('/:id', async (req, res) => {
       include: {
         locations: {
           include: {
-            cluster: {
+            clusters: {
               include: {
-                district: {
-                  include: { regional: true }
+                districts: {
+                  include: { regionals: true }
                 }
               }
             }

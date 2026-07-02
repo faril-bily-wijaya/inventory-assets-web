@@ -22,16 +22,16 @@ router.get('/', async (req, res) => {
     const { clusterId, districtId, regionalId } = req.query
     const where: any = {}
     if (clusterId) where.cluster_id = clusterId as string
-    if (districtId) where.cluster = { district: { id: districtId as string } }
-    if (regionalId) where.cluster = { district: { regional: { id: regionalId as string } } }
+    if (districtId) where.clusters = { districts: { id: districtId as string } }
+    if (regionalId) where.clusters = { districts: { regionals: { id: regionalId as string } } }
 
     const locations = await prisma.locations.findMany({
       where,
       include: {
         clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
@@ -53,8 +53,8 @@ router.get('/map-data', async (req, res) => {
       include: {
         clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
@@ -84,8 +84,8 @@ router.get('/map-data', async (req, res) => {
         deviceCount: loc.devices.length,
         devices: loc.devices,
         hierarchy: {
-          regional: loc.clusters?.district?.regional?.name,
-          district: loc.clusters?.district?.name,
+          regional: loc.clusters?.districts?.regionals?.name,
+          district: loc.clusters?.districts?.name,
           cluster: loc.clusters?.name,
         },
         worstStatus,
@@ -107,8 +107,8 @@ router.get('/:id', async (req, res) => {
       include: {
         clusters: {
           include: {
-            district: {
-              include: { regional: true }
+            districts: {
+              include: { regionals: true }
             }
           }
         },
@@ -187,10 +187,10 @@ router.get('/:id/devices', async (req, res) => {
     const location = await prisma.locations.findUnique({
       where: { id },
       include: {
-        cluster: {
+        clusters: {
           include: {
-            district: {
-              include: { regional: true },
+            districts: {
+              include: { regionals: true },
             },
           },
         },
@@ -249,9 +249,9 @@ router.get('/:id/devices', async (req, res) => {
         address: location.address,
         class_type: location.class_type,
         hierarchy: {
-          regional: location.cluster?.district?.regional?.name,
-          district: location.cluster?.district?.name,
-          cluster: location.cluster?.name,
+          regional: location.clusters?.districts?.regionals?.name,
+          district: location.clusters?.districts?.name,
+          cluster: location.clusters?.name,
         },
       },
       devices: {
