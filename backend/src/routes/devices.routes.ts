@@ -166,7 +166,7 @@ router.post('/', async (req, res) => {
     res.status(201).json({ device })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors })
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
     }
     throw error
   }
@@ -183,7 +183,7 @@ router.put('/:id', async (req, res) => {
     res.json({ device })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors })
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
     }
     throw error
   }

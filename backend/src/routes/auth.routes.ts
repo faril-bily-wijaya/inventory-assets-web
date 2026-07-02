@@ -74,7 +74,7 @@ router.post('/login', async (req, res) => {
   } catch (error) {
     log('[AUTH] Error:', error)
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors })
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
     }
     throw error
   }
@@ -125,7 +125,7 @@ router.post('/register', async (req, res) => {
     })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Invalid input', details: error.errors })
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
     }
     throw error
   }

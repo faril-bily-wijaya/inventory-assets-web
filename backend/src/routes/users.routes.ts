@@ -39,7 +39,7 @@ router.put('/:id/role', adminOnly, async (req, res) => {
     }
 
     const user = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { role },
       select: {
         id: true,
@@ -62,7 +62,7 @@ router.put('/:id/active', adminOnly, async (req, res) => {
     const { isActive } = req.body
 
     const user = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { isActive },
       select: {
         id: true,
@@ -83,7 +83,7 @@ router.put('/:id/active', adminOnly, async (req, res) => {
 router.delete('/:id', adminOnly, async (req, res) => {
   try {
     await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: { isActive: false },
     })
 
