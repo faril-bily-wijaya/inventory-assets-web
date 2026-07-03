@@ -20,12 +20,26 @@ model users {
   @@map("users")
 }
 
-model regionals {
+model areas {
   id         String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name       String      @map("name") @db.VarChar(100)
+  name       String      @unique @map("name") @db.VarChar(100)
   created_at DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updated_at DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  regionals  regionals[]
+  locations  locations[]
+
+  @@map("areas")
+}
+
+model regionals {
+  id         String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String      @unique @map("name") @db.VarChar(100)
+  area_id    String?     @map("area_id") @db.Uuid
+  created_at DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  areas      areas?      @relation(fields: [area_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   districts  districts[]
+  locations  locations[]
 
   @@map("regionals")
 }
@@ -38,6 +52,7 @@ model districts {
   updated_at  DateTime    @default(now()) @map("updated_at") @db.Timestamptz(6)
   regionals   regionals   @relation(fields: [regional_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   clusters    clusters[]
+  locations   locations[]
 
   @@map("districts")
   @@unique([name, regional_id])
@@ -57,40 +72,74 @@ model clusters {
 }
 
 model locations {
-  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name       String    @unique @map("name") @db.VarChar(255)
-  latitude   Float     @map("latitude")
-  longitude  Float     @map("longitude")
-  cluster_id String?   @map("cluster_id") @db.Uuid
-  class_type String    @default("BASIC") @map("class_type") @db.VarChar(20)
-  address    String?   @map("address")
-  created_at DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updated_at DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  clusters   clusters?  @relation(fields: [cluster_id], references: [id], onUpdate: NoAction)
-  devices    devices[]
+  id                 String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name               String    @unique @map("name") @db.VarChar(255)
+  site_code          String?   @map("site_code") @db.VarChar(100)
+  latitude           Float     @map("latitude")
+  longitude          Float     @map("longitude")
+  cluster_id         String?   @map("cluster_id") @db.Uuid
+  area_id            String?   @map("area_id") @db.Uuid
+  regional_id        String?   @map("regional_id") @db.Uuid
+  district_id        String?   @map("district_id") @db.Uuid
+  class_type         String    @default("BASIC") @map("class_type") @db.VarChar(20)
+  address            String?   @map("address")
+  territory          String?   @map("territory") @db.VarChar(100)
+  teknisi            String?   @map("teknisi") @db.Text
+  uuid               String?   @map("uuid") @db.Uuid
+  organization_uuid  String?   @map("organization_uuid") @db.Uuid
+  organization_sname String?   @map("organization_sname") @db.VarChar(255)
+  created_at         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at         DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  clusters           clusters?  @relation(fields: [cluster_id], references: [id], onUpdate: NoAction)
+  areas              areas?    @relation(fields: [area_id], references: [id], onUpdate: NoAction)
+  regionals          regionals? @relation(fields: [regional_id], references: [id], onUpdate: NoAction)
+  districts          districts? @relation(fields: [district_id], references: [id], onUpdate: NoAction)
+  devices            devices[]
 
   @@map("locations")
 }
 
 model devices {
-  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  device_code   String?   @unique @map("device_code") @db.VarChar(100)
-  device_name   String    @map("device_name") @db.VarChar(255)
-  device_type   String    @map("device_type") @db.VarChar(50)
-  brand         String?   @map("brand") @db.VarChar(100)
-  model         String?   @map("model") @db.VarChar(100)
-  serial_number String?   @map("serial_number") @db.VarChar(100)
-  kapasitas     String?   @map("kapasitas") @db.VarChar(50)
-  year          Int?      @map("year")
-  room          String?   @map("room") @db.VarChar(100)
-  status       String    @default("OPERATIONAL") @map("status") @db.VarChar(30)
-  condition     String?   @map("condition") @db.VarChar(50)
-  cap_real      String?   @map("cap_real") @db.VarChar(50)
-  location_id   String    @map("location_id") @db.Uuid
-  created_at    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updated_at    DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
-  deleted_at    DateTime? @map("deleted_at") @db.Timestamptz(6)
-  locations     locations  @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id               String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  device_code      String?   @unique @map("device_code") @db.VarChar(100)
+  device_name      String    @map("device_name") @db.VarChar(255)
+  device_type      String    @map("device_type") @db.VarChar(50)
+  brand            String?   @map("brand") @db.VarChar(100)
+  model            String?   @map("model") @db.VarChar(100)
+  serial_number    String?   @map("serial_number") @db.VarChar(100)
+  label_code       String?   @map("label_code") @db.VarChar(100)
+  kapasitas        String?   @map("kapasitas") @db.VarChar(50)
+  satuan_kapasitas String?   @map("satuan_kapasitas") @db.VarChar(20)
+  year             Int?      @map("year")
+  usia_perangkat   Int?      @map("usia_perangkat")
+  status           String    @default("OPERATIONAL") @map("status") @db.VarChar(30)
+  condition        String?   @map("condition") @db.VarChar(50)
+  cap_real         String?   @map("cap_real") @db.VarChar(50)
+  jenis_tegangan   String?   @map("jenis_tegangan") @db.VarChar(20)
+  beban_arus       Float?    @map("beban_arus")
+  satuan_beban     String?   @map("satuan_beban") @db.VarChar(20)
+  keterangan       String?   @map("keterangan") @db.Text
+  ruangan_code     String?   @map("ruangan_code") @db.VarChar(100)
+  ruangan_name     String?   @map("ruangan_name") @db.VarChar(255)
+  ruangan_panjang  Float?    @map("ruangan_panjang")
+  ruangan_lebar    Float?    @map("ruangan_lebar")
+  ruangan_tinggi   Float?    @map("ruangan_tinggi")
+  ruangan_luas     Float?    @map("ruangan_luas")
+  rack_code        String?   @map("rack_code") @db.VarChar(100)
+  rack_name        String?   @map("rack_name") @db.VarChar(255)
+  rack_panjang     Float?    @map("rack_panjang")
+  rack_lebar       Float?    @map("rack_lebar")
+  rack_tinggi      Float?    @map("rack_tinggi")
+  rack_luas        Float?    @map("rack_luas")
+  uuid               String?   @map("uuid") @db.Uuid
+  organization_name  String?   @map("organization_name") @db.VarChar(255)
+  organization_uuid String?   @map("organization_uuid") @db.Uuid
+  organization_sname String?   @map("organization_sname") @db.VarChar(50)
+  location_id      String    @map("location_id") @db.Uuid
+  created_at       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at       DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  deleted_at       DateTime? @map("deleted_at") @db.Timestamptz(6)
+  locations        locations @relation(fields: [location_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@map("devices")
 }
