@@ -26,6 +26,7 @@ export interface ImportPreview {
   devicesBaru: number
   devicesUpdated: number
   duplikatDalamFile: number
+  areasBaru: number
   regionalsBaru: number
   districtsBaru: number
   clustersBaru: number
@@ -55,6 +56,7 @@ export const CATU_DAYA_TYPES: readonly string[] = [
 const BATCH_SIZE = 100
 
 const HIERARCHY_DEFAULTS = {
+  area: 'AREA DEFAULT',
   regional: 'REGIONAL DEFAULT',
   district: 'DISTRICT DEFAULT',
   cluster: 'CLUSTER DEFAULT',
@@ -68,7 +70,7 @@ const HIERARCHY_DEFAULTS = {
  * Builds the lookup key used for intra-file duplicate detection.
  */
 function buildRowKey(row: ParsedRow): string {
-  return `${row.code}::${row.label_code ?? ''}`
+  return normalise(row.code)
 }
 
 /**
@@ -88,14 +90,36 @@ function mapDeviceData(row: ParsedRow, location_id: string) {
     device_name: normalise(row.name),
     device_type: normalise(row.jenis),
     serial_number: normalise(row.label_code) || null,
+    label_code: normalise(row.label_code) || null,
     brand: normalise(row.merk) || null,
     model: null,
     kapasitas: normalise(row.kapasitas) || null,
+    satuan_kapasitas: normalise(row.satuan_kapasitas) || null,
     year: row.tahun_operasi > 0 ? row.tahun_operasi : null,
-    room: normalise(row.ruangan_name) || null,
+    usia_perangkat: row.usia_perangkat ?? null,
     status: normalise(row.status) || 'AKTIF',
-    condition: normalise(row.kondisi) || null,
+    condition: normalise(row.kondisi) || normalise(row.condition_en) || null,
     cap_real: normalise(row.jenis_tegangan) || null,
+    jenis_tegangan: normalise(row.jenis_tegangan) || null,
+    beban_arus: typeof row.beban_arus === 'number' ? row.beban_arus : null,
+    satuan_beban: normalise(row.satuan_beban) || null,
+    keterangan: normalise(row.keterangan) || null,
+    ruangan_code: normalise(row.ruangan_code) || null,
+    ruangan_name: normalise(row.ruangan_name) || null,
+    ruangan_panjang: row.ruangan_panjang ?? null,
+    ruangan_lebar: row.ruangan_lebar ?? null,
+    ruangan_tinggi: row.ruangan_tinggi ?? null,
+    ruangan_luas: row.ruangan_luas ?? null,
+    rack_code: normalise(row.rack_code) || null,
+    rack_name: normalise(row.rack_name) || null,
+    rack_panjang: row.rack_panjang ?? null,
+    rack_lebar: row.rack_lebar ?? null,
+    rack_tinggi: row.rack_tinggi ?? null,
+    rack_luas: row.rack_luas ?? null,
+    uuid: normalise(row.uuid) || null,
+    organization_name: normalise(row.organization_name) || null,
+    organization_uuid: normalise(row.organization_uuid) || null,
+    organization_sname: normalise(row.organization_sname) || null,
     location_id,
   }
 }
@@ -135,6 +159,7 @@ export async function generateImportPreview(
 
   // --- 2. Collect all unique device codes & hierarchy names ---
   const deviceCodeSet = new Set<string>()
+  const areaNames = new Set<string>()
   const regionalNames = new Set<string>()
   const districtNames = new Set<string>()
   const clusterNames = new Set<string>()
@@ -143,15 +168,17 @@ export async function generateImportPreview(
   for (const row of data) {
     deviceCodeSet.add(normalise(row.code))
 
+    const ar = normalise(row.area) || HIERARCHY_DEFAULTS.area
     const reg = normalise(row.region) || HIERARCHY_DEFAULTS.regional
     const dist = normalise(row.district) || HIERARCHY_DEFAULTS.district
-    const clus = normalise(row.organization_name) || normalise(row.cluster) || HIERARCHY_DEFAULTS.cluster
+    const clus = normalise(row.cluster) || normalise(row.organization_name) || HIERARCHY_DEFAULTS.cluster
     const loc = normalise(row.sites_name)
 
     if (loc) locationNames.add(loc)
     if (clus) clusterNames.add(clus)
     if (dist) districtNames.add(dist)
     if (reg) regionalNames.add(reg)
+    if (ar) areaNames.add(ar)
 
     // Basic validation
     if (!row.code) {
@@ -167,13 +194,15 @@ export async function generateImportPreview(
   const existingCodeSet = new Set(existingCodes.map((d) => d.device_code))
 
   // --- 4. Check which hierarchy names already exist ---
-  const [existingRegs, existingDists, existingClusters, existingLocs] = await Promise.all([
+  const [existingAreas, existingRegs, existingDists, existingClusters, existingLocs] = await Promise.all([
+    prisma.areas.findMany({ where: { name: { in: [...areaNames] } }, select: { name: true } }),
     prisma.regionals.findMany({ where: { name: { in: [...regionalNames] } }, select: { name: true } }),
     prisma.districts.findMany({ where: { name: { in: [...districtNames] } }, select: { name: true } }),
     prisma.clusters.findMany({ where: { name: { in: [...clusterNames] } }, select: { name: true } }),
     prisma.locations.findMany({ where: { name: { in: [...locationNames] } }, select: { name: true } }),
   ])
 
+  const existingAreaSet = new Set(existingAreas.map((a) => a.name))
   const existingRegSet = new Set(existingRegs.map((r) => r.name))
   const existingDistSet = new Set(existingDists.map((d) => d.name))
   const existingClusterSet = new Set(existingClusters.map((c) => c.name))
@@ -187,6 +216,7 @@ export async function generateImportPreview(
     else devicesBaru++
   }
 
+  const areasBaru = [...areaNames].filter((n) => !existingAreaSet.has(n)).length
   const regionalsBaru = [...regionalNames].filter((n) => !existingRegSet.has(n)).length
   const districtsBaru = [...districtNames].filter((n) => !existingDistSet.has(n)).length
   const clustersBaru = [...clusterNames].filter((n) => !existingClusterSet.has(n)).length
@@ -197,6 +227,7 @@ export async function generateImportPreview(
     devicesBaru,
     devicesUpdated,
     duplikatDalamFile: duplicateKeys.size,
+    areasBaru,
     regionalsBaru,
     districtsBaru,
     clustersBaru,
@@ -269,14 +300,16 @@ export async function executeImport(
   // Pre-load all existing hierarchy nodes and devices into memory to avoid
   // repeated DB lookups inside the row loop.
   // -------------------------------------------------------------------------
-  const [allRegs, allDists, allClusters, allLocs, allDevices] = await Promise.all([
-    prisma.regionals.findMany({ select: { id: true, name: true } }),
+  const [allAreas, allRegs, allDists, allClusters, allLocs, allDevices] = await Promise.all([
+    prisma.areas.findMany({ select: { id: true, name: true } }),
+    prisma.regionals.findMany({ select: { id: true, name: true, area_id: true } }),
     prisma.districts.findMany({ select: { id: true, name: true, regional_id: true } }),
     prisma.clusters.findMany({ select: { id: true, name: true, district_id: true } }),
     prisma.locations.findMany({ select: { id: true, name: true, cluster_id: true } }),
     prisma.devices.findMany({ select: { id: true, device_code: true } }),
   ])
 
+  const areaByName = new Map(allAreas.map((a) => [a.name, a.id]))
   const regByName = new Map(allRegs.map((r) => [r.name, r.id]))
   const distByName = new Map(allDists.map((d) => [d.name, d.id]))
   const clusterByName = new Map(allClusters.map((c) => [c.name, c.id]))
@@ -287,15 +320,24 @@ export async function executeImport(
   // Phase 1 — Upsert hierarchy (top-down) for all unique rows
   // -------------------------------------------------------------------------
   for (const row of uniqueRows) {
+    const areaName = normalise(row.area) || HIERARCHY_DEFAULTS.area
     const regName = normalise(row.region) || HIERARCHY_DEFAULTS.regional
     const distName = normalise(row.district) || HIERARCHY_DEFAULTS.district
-    const clusterName = normalise(row.organization_name) || normalise(row.cluster) || HIERARCHY_DEFAULTS.cluster
+    const clusterName = normalise(row.cluster) || normalise(row.organization_name) || HIERARCHY_DEFAULTS.cluster
     const locName = normalise(row.sites_name)
+
+    // --- Area ---
+    let area_id = areaByName.get(areaName)
+    if (!area_id) {
+      const created = await prisma.areas.create({ data: { name: areaName } })
+      area_id = created.id
+      areaByName.set(areaName, area_id)
+    }
 
     // --- Regional ---
     let regional_id = regByName.get(regName)
     if (!regional_id) {
-      const created = await prisma.regionals.create({ data: { name: regName } })
+      const created = await prisma.regionals.create({ data: { name: regName, area_id } })
       regional_id = created.id
       regByName.set(regName, regional_id)
     }
@@ -328,11 +370,20 @@ export async function executeImport(
       const created = await prisma.locations.create({
         data: {
           name: locName,
+          site_code: normalise(row.sites_code) || null,
           latitude: lat,
           longitude: lng,
           cluster_id,
+          area_id,
+          regional_id,
+          district_id,
           class_type: normalise(row.class_type) || 'BASIC',
           address: normalise(row.address) || null,
+          territory: normalise(row.territory) || null,
+          teknisi: normalise(row.teknisi) || null,
+          uuid: normalise(row.uuid) || null,
+          organization_uuid: normalise(row.organization_uuid) || null,
+          organization_sname: normalise(row.organization_sname) || null,
         },
       })
       locByName.set(locName, created.id)
@@ -343,6 +394,8 @@ export async function executeImport(
   // -------------------------------------------------------------------------
   // Phase 2 — Upsert devices in batches
   // -------------------------------------------------------------------------
+  const newDevicesData: any[] = []
+
   for (let i = 0; i < uniqueRows.length; i += BATCH_SIZE) {
     const batch = uniqueRows.slice(i, i + BATCH_SIZE)
 
@@ -351,13 +404,11 @@ export async function executeImport(
         const device_code = normalise(row.code)
         const locName = normalise(row.sites_name)
 
-        // Validate device code before anything else
         if (!device_code) {
           errors.push(`Baris "${row.name}": code/deviceCode kosong`)
           return
         }
 
-        // Skip rows without a valid location
         const location_id = locByName.get(locName)
         if (!location_id) {
           errors.push(`Baris "${row.name}": location tidak ditemukan`)
@@ -378,17 +429,25 @@ export async function executeImport(
             errors.push(`Gagal update device ${device_code}: ${(err as Error).message}`)
           }
         } else {
-          // Create new
-          try {
-            await prisma.devices.create({ data: deviceData })
-            deviceByCode.set(device_code, device_code) // mark as existing for this session
-            newDevices++
-          } catch (err) {
-            errors.push(`Gagal insert device ${device_code}: ${(err as Error).message}`)
-          }
+          // Collect new for bulk insert
+          newDevicesData.push(deviceData)
+          deviceByCode.set(device_code, device_code) // mark as existing for this session
         }
-      }),
+      })
     )
+  }
+
+  // Bulk insert all new devices at once
+  if (newDevicesData.length > 0) {
+    try {
+      const result = await prisma.devices.createMany({
+        data: newDevicesData,
+        skipDuplicates: true, // safe guard
+      })
+      newDevices += result.count
+    } catch (err) {
+      errors.push(`Gagal bulk insert devices: ${(err as Error).message}`)
+    }
   }
 
   return {
