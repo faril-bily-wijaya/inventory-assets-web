@@ -1,4 +1,33 @@
-# Task 6: Create Devices and Locations Routes
+# Task 6: Update Template CSV
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Update `backend/template_import.csv` to include the 4 new columns.
+
+## File to Modify
+
+`backend/template_import.csv`
+
+## Changes
+
+1. Add these 4 columns to the header row (after `teknisi`):
+```
+uuid,organization_name,organization_uuid,organization_sname
+```
+
+2. Add placeholder values for each data row. Example:
+```
+deab2cef-20a9-4a6d-98a1-af0361cd88ee,CLUSTER PALEMBANG,549f33c7-aac5-4059-a150-3e4c52239557,C_PLMB
+```
+
+## Acceptance Criteria
+
+- [ ] New columns added to header
+- [ ] Sample data rows updated with placeholder values
+- [ ] CSV is valid format
 
 **Location in Plan:** Phase 3, Task 6
 

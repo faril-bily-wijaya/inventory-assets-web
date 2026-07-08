@@ -1,0 +1,3 @@
+- [x] Task 1: Optimasi Endpoint `/api/locations` (menghapus include devices)
+- [x] Task 2: Optimasi Endpoint `/api/locations/map-data` (hanya memilih field spesifik untuk devices)
+- [x] Task 3: Menampilkan Seluruh Kolom pada Devices Page (modifikasi DevicesPage.tsx)

@@ -1,4 +1,35 @@
-# Task 2: Setup Backend Project
+# Task 2: Update Import Service
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Update `mapDeviceData()` function in `backend/src/services/importService.ts` to include the 4 new fields.
+
+## File to Modify
+
+`backend/src/services/importService.ts` - function `mapDeviceData()` around line 87
+
+## Exact Change
+
+Find the `mapDeviceData` function and add these 4 fields after `rack_luas` (around line 118):
+
+```typescript
+uuid: normalise(row.uuid) || null,
+organization_name: normalise(row.organization_name) || null,
+organization_uuid: normalise(row.organization_uuid) || null,
+organization_sname: normalise(row.organization_sname) || null,
+```
+
+## Acceptance Criteria
+
+- [ ] 4 new fields added to mapDeviceData return object
+- [ ] Code compiles successfully
+
+## Context
+
+Task 1 added the fields to the database schema. This task updates the import logic to populate those fields when importing CSV data. The fields `uuid`, `organization_name`, `organization_uuid`, `organization_sname` are already being parsed from CSV in fileParser.ts (ParsedRow interface).
 
 **Location in Plan:** Phase 1, Task 2
 

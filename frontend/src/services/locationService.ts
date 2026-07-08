@@ -2,9 +2,11 @@ import { api } from './api'
 import type { Location, MapMarker, HierarchyResponse } from '../types'
 
 export interface LocationFilters {
-  clusterId?: string
-  districtId?: string
-  regionalId?: string
+  areaId?: string[]
+  clusterId?: string[]
+  districtId?: string[]
+  regionalId?: string[]
+  locationId?: string[]
 }
 
 export const locationService = {
@@ -13,8 +15,8 @@ export const locationService = {
     return response.data.locations
   },
 
-  async getMapData(): Promise<MapMarker[]> {
-    const response = await api.get<{ markers: MapMarker[] }>('/locations/map-data')
+  async getMapData(filters: LocationFilters = {}): Promise<MapMarker[]> {
+    const response = await api.get<{ markers: MapMarker[] }>('/locations/map-data', { params: filters })
     return response.data.markers
   },
 
@@ -42,8 +44,18 @@ export const locationService = {
     return response.data
   },
 
-  async createRegional(name: string) {
-    const response = await api.post('/hierarchy/regionals', { name })
+  async getAreas() {
+    const response = await api.get('/hierarchy/areas')
+    return response.data
+  },
+
+  async createArea(name: string) {
+    const response = await api.post('/hierarchy/areas', { name })
+    return response.data
+  },
+
+  async createRegional(name: string, areaId?: string) {
+    const response = await api.post('/hierarchy/regionals', { name, areaId })
     return response.data
   },
 

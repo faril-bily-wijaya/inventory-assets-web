@@ -1,5 +1,6 @@
 import { type ReactNode, useState } from 'react'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '../../utils/cn'
 import { Button } from '../ui/Button'
 
@@ -12,64 +13,80 @@ interface SidebarProps {
 export function Sidebar({ children, isOpen = true, onClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
+  const sidebarWidth = isCollapsed ? 80 : 280
+
   return (
     <>
       {/* Mobile overlay */}
-      {isOpen && onClose && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={onClose}
-        />
-      )}
+      <AnimatePresence>
+        {isOpen && onClose && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            onClick={onClose}
+          />
+        )}
+      </AnimatePresence>
 
-      <aside
+      <motion.aside
+        initial={false}
+        animate={{ 
+          width: sidebarWidth,
+        }}
+        transition={{ type: "spring", bounce: 0, duration: 0.4 }}
         className={cn(
-          'bg-[var(--bg-secondary)] border-r border-[var(--border)] transition-all duration-250 flex flex-col',
-          'fixed lg:relative inset-y-0 left-0 z-50',
-          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-          isCollapsed ? 'w-16' : 'w-72'
+          'glass-panel border-r-0 lg:border-r border-[var(--border)] flex flex-col',
+          'fixed lg:relative inset-y-0 left-0 z-50 shadow-xl lg:shadow-none h-full',
+          'transition-transform duration-300 ease-in-out',
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
         {/* Toggle button */}
-        <div className="flex items-center justify-between p-2 border-b border-[var(--border)]">
-          <span className={cn('text-sm font-medium', isCollapsed && 'hidden')}>
-            Menu
-          </span>
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border)] h-16 shrink-0">
+          <AnimatePresence mode="popLayout">
+            {!isCollapsed && (
+              <motion.span 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                className="text-sm font-semibold tracking-wider text-[var(--text-muted)] uppercase"
+              >
+                Menu
+              </motion.span>
+            )}
+          </AnimatePresence>
+          <div className="flex items-center gap-2 mx-auto lg:mx-0">
             {onClose && (
               <Button variant="ghost" size="sm" onClick={onClose} className="p-2 lg:hidden">
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </Button>
             )}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 hidden lg:flex"
+              className="p-2 hidden lg:flex hover:bg-cyan-500/10 hover:text-cyan-500 transition-colors"
             >
-              {isCollapsed ? (
-                <ChevronRight className="w-4 h-4" />
-              ) : (
-                <ChevronLeft className="w-4 h-4" />
-              )}
+              <motion.div
+                animate={{ rotate: isCollapsed ? 180 : 0 }}
+                transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </motion.div>
             </Button>
           </div>
         </div>
 
         {/* Sidebar content */}
-        <div className={cn('flex-1 overflow-y-auto', isCollapsed && 'hidden lg:block')}>
-          {children}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 custom-scrollbar">
+          <div className={cn("transition-opacity duration-300", isCollapsed ? "opacity-0 invisible lg:opacity-100 lg:visible" : "opacity-100")}>
+            {children}
+          </div>
         </div>
 
-        {/* Collapsed icons for desktop */}
-        {isCollapsed && (
-          <div className="hidden lg:flex flex-col items-center py-4">
-            <div className="w-6 h-6 bg-cyan-500 rounded flex items-center justify-center mb-4">
-              <span className="text-white text-xs font-bold">IF</span>
-            </div>
-          </div>
-        )}
-      </aside>
+      </motion.aside>
     </>
   )
 }

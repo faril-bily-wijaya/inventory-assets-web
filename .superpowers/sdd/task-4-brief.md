@@ -1,4 +1,54 @@
-# Task 4: Create Layout Components
+# Task 4: Update DeviceModal
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Update `frontend/src/components/modals/DeviceModal.tsx` to add form fields for the 4 new organization fields.
+
+## File to Modify
+
+`frontend/src/components/modals/DeviceModal.tsx`
+
+## Steps
+
+1. Add new fields to `deviceSchema` z.object (after `locationId`):
+```typescript
+uuid: z.string().optional(),
+organizationName: z.string().optional(),
+organizationUuid: z.string().optional(),
+organizationSname: z.string().optional(),
+```
+
+2. Add defaultValues in `useForm` for editing mode:
+```typescript
+uuid: device?.uuid,
+organizationName: device?.organizationName,
+organizationUuid: device?.organizationUuid,
+organizationSname: device?.organizationSname,
+```
+
+3. Add a new section in the form (after the Location selector) with these fields:
+```tsx
+<div className="border-t border-[var(--border)] pt-4 mt-4">
+  <h3 className="text-sm font-semibold text-[var(--text-secondary)] mb-3">Organization Info</h3>
+  <div className="grid grid-cols-2 gap-4">
+    <Input label="UUID" placeholder="deab2cef-..." {...register('uuid')} />
+    <Input label="Organization Short Name" placeholder="C_PKLP" {...register('organizationSname')} />
+  </div>
+  <div className="grid grid-cols-2 gap-4 mt-3">
+    <Input label="Organization Name" placeholder="CLUSTER PALEMBANG" {...register('organizationName')} />
+    <Input label="Organization UUID" placeholder="549f33c7-..." {...register('organizationUuid')} />
+  </div>
+</div>
+```
+
+## Acceptance Criteria
+
+- [ ] New fields added to form schema
+- [ ] Form pre-fills values when editing
+- [ ] UI section added for organization info
 
 **Location in Plan:** Phase 2, Task 4
 

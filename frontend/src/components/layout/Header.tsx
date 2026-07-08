@@ -1,4 +1,4 @@
-import { Sun, Moon, Bell, LogOut, User, Menu } from 'lucide-react'
+import { Sun, Moon, Bell, LogOut, User, Menu, Settings } from 'lucide-react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
@@ -14,7 +14,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
   const { user, logout } = useAuth()
 
   return (
-    <header className="h-14 bg-[var(--bg-secondary)] border-b border-[var(--border)] px-4 flex items-center justify-between">
+    <header className="h-16 glass z-40 px-6 flex items-center justify-between shadow-sm relative">
       {/* Left side */}
       <div className="flex items-center gap-3">
         {showMenuButton && (
@@ -23,12 +23,11 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
           </Button>
         )}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-cyan-500 rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-sm">IF</span>
-          </div>
-          <div>
-            <h1 className="font-semibold text-[var(--text-primary)]">Inventory Assets</h1>
-            <p className="text-xs text-[var(--text-muted)]">TIF Indonesia</p>
+          <div className="flex flex-col">
+            <div className="h-8 md:h-10 w-auto">
+              <img src="/Logo.png" alt="Inventory Assets Logo" className="h-full w-auto object-contain" />
+            </div>
+            <p className="text-[10px] text-[var(--text-muted)] font-medium mt-1">Inventori Perangkat</p>
           </div>
         </div>
       </div>
@@ -45,10 +44,21 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="sm" className="p-2 relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="p-2 relative">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="p-4 text-center text-sm text-[var(--text-muted)]">
+              No new notifications
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* User menu */}
         <DropdownMenu>
@@ -70,6 +80,13 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
                 <p className="text-xs text-cyan-400 mt-1">{user?.role}</p>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => window.location.href = '/settings'} className="text-[var(--text-primary)]">
+              <div className="w-full cursor-pointer flex items-center">
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </div>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-red-400 cursor-pointer">
               <LogOut className="w-4 h-4 mr-2" />

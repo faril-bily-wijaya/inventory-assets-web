@@ -1,0 +1,2 @@
+- [x] Task 1: Update fungsi isCatuDaya di `frontend/src/utils/deviceType.ts` dengan keywords sesuai spesifikasi (2026-07-01-import-data-design.md)
+- [x] Task 2: Verifikasi kembali apakah dashboard menampilkan jumlah catu daya dengan tepat.

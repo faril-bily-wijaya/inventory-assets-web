@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { MapPin, Server, Zap, ChevronRight, Loader2 } from 'lucide-react'
+import { MapPin, Server, Zap, ChevronRight, Loader2, AlertTriangle } from 'lucide-react'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
 import { DeviceSection } from './DeviceSection'
@@ -42,6 +42,9 @@ export function DevicePopup({ marker }: Props) {
     inactive: 'muted'
   } as const
 
+  const devicesNeedingModernization = marker.devices?.filter((d: any) => d.butuhModernisasi) || []
+  const hasModernization = devicesNeedingModernization.length > 0
+
   return (
     <div className="min-w-[280px] max-w-[320px] p-3 bg-slate-900 border border-slate-700 rounded-lg shadow-xl">
       {/* Header */}
@@ -63,8 +66,23 @@ export function DevicePopup({ marker }: Props) {
           <Server className="w-3 h-3 shrink-0" />
           <span>{marker.deviceCount} devices</span>
         </div>
+        {hasModernization && (
+          <div className="flex items-center gap-2 text-amber-400 font-semibold bg-amber-400/10 px-2 py-1 rounded-md border border-amber-400/20">
+            <AlertTriangle className="w-3 h-3 shrink-0" />
+            <span>{devicesNeedingModernization.length} perangkat butuh modernisasi</span>
+          </div>
+        )}
         {marker.classType && (
           <div className="text-slate-500">Class: {marker.classType}</div>
+        )}
+        {marker.siteCode && (
+          <div className="text-slate-500">Site Code: <span className="font-mono text-cyan-400">{marker.siteCode}</span></div>
+        )}
+        {marker.teknisi && (
+          <div className="text-slate-500 mt-2 p-2 bg-slate-800/50 rounded-md border border-slate-700">
+            <span className="block text-xs font-semibold text-slate-300 mb-1">Teknisi:</span>
+            {marker.teknisi}
+          </div>
         )}
       </div>
 

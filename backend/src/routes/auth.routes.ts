@@ -103,7 +103,7 @@ router.post('/register', async (req, res) => {
         email: data.email,
         password: hashedPassword,
         full_name: data.fullName,
-        role: 'USER',
+        role: 'STAFF',
       },
     })
 
@@ -123,11 +123,12 @@ router.post('/register', async (req, res) => {
         role: user.role,
       },
     })
-  } catch (error) {
+  } catch (error: any) {
+    log('[AUTH REGISTER ERROR]', error?.message || error)
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: 'Invalid input', details: error.issues })
     }
-    throw error
+    res.status(500).json({ error: 'Internal server error: ' + (error?.message || 'Unknown') })
   }
 })
 
@@ -152,6 +153,94 @@ router.get('/me', authMiddleware, async (req: any, res) => {
 
     res.json({ user })
   } catch (error) {
+    throw error
+  }
+})
+
+const updateProfileSchema = z.object({
+  username: z.string().min(3).max(50),
+  email: z.string().email(),
+  full_name: z.string().optional().nullable(),
+})
+
+// PUT /api/auth/me
+router.put('/me', authMiddleware, async (req: any, res) => {
+  try {
+    const data = updateProfileSchema.parse(req.body)
+
+    // Check if username/email belongs to someone else
+    const existing = await prisma.users.findFirst({
+      where: {
+        OR: [{ username: data.username }, { email: data.email }],
+        NOT: { id: req.user.id },
+      },
+    })
+
+    if (existing) {
+      return res.status(400).json({ error: 'Username or email already in use' })
+    }
+
+    const updatedUser = await prisma.users.update({
+      where: { id: req.user.id },
+      data: {
+        username: data.username,
+        email: data.email,
+        full_name: data.full_name,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        full_name: true,
+        role: true,
+        created_at: true,
+      },
+    })
+
+    res.json({ user: updatedUser })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
+    }
+    throw error
+  }
+})
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: z.string().min(6),
+})
+
+// PUT /api/auth/me/password
+router.put('/me/password', authMiddleware, async (req: any, res) => {
+  try {
+    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body)
+
+    const user = await prisma.users.findUnique({
+      where: { id: req.user.id },
+    })
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password)
+    if (!isValidPassword) {
+      return res.status(400).json({ error: 'Incorrect current password' })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+    await prisma.users.update({
+      where: { id: req.user.id },
+      data: { password: hashedPassword },
+    })
+
+    res.json({ success: true })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: 'Invalid input', details: error.issues })
+    }
     throw error
   }
 })

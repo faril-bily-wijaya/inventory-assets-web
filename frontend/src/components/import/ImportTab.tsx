@@ -12,11 +12,16 @@ import toast from 'react-hot-toast'
 
 type ImportStep = 'select' | 'preview' | 'confirm'
 
-export function ImportTab() {
+interface ImportTabProps {
+  importType?: 'default' | 'genset'
+}
+
+export function ImportTab({ importType = 'default' }: ImportTabProps) {
   const [step, setStep] = useState<ImportStep>('select')
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [mode, setMode] = useState<ImportMode>('upsert')
   const [preview, setPreview] = useState<ImportPreviewType | null>(null)
+  const [internalImportType, setInternalImportType] = useState<'default' | 'genset'>(importType)
   const [isLoading, setIsLoading] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -44,6 +49,7 @@ export function ImportTab() {
       const options: UploadOptions = {
         file: selectedFile,
         mode,
+        importType: internalImportType,
       }
       const result = await importService.getPreview(options)
       setPreview(result)
@@ -74,6 +80,7 @@ export function ImportTab() {
       const options: UploadOptions = {
         file: selectedFile,
         mode,
+        importType: internalImportType,
       }
       await importService.executeImport(options)
       setImportSuccess(true)
@@ -135,9 +142,44 @@ export function ImportTab() {
       {/* Import Card */}
       <Card>
         <div className="space-y-6">
+          {/* Format Selection */}
+          <div>
+            <h3 className="text-sm font-medium text-slate-300 mb-3">1. Pilih Format File</h3>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="importType" 
+                  value="default" 
+                  checked={internalImportType === 'default'}
+                  onChange={() => {
+                    setInternalImportType('default')
+                    handleClear()
+                  }}
+                  className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500"
+                />
+                <span className="text-sm text-slate-300">Format Standar (Default)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="importType" 
+                  value="genset" 
+                  checked={internalImportType === 'genset'}
+                  onChange={() => {
+                    setInternalImportType('genset')
+                    handleClear()
+                  }}
+                  className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500"
+                />
+                <span className="text-sm text-slate-300">Format Genset Mobile</span>
+              </label>
+            </div>
+          </div>
+
           {/* File Selection */}
           <div>
-            <h3 className="text-sm font-medium text-slate-300 mb-3">1. Pilih File</h3>
+            <h3 className="text-sm font-medium text-slate-300 mb-3">2. Pilih File</h3>
             <FileDropzone
               onFileSelect={handleFileSelect}
               selectedFile={selectedFile}
@@ -149,7 +191,7 @@ export function ImportTab() {
           {/* Mode Selection */}
           {selectedFile && (
             <div>
-              <h3 className="text-sm font-medium text-slate-300 mb-3">2. Pilih Mode</h3>
+              <h3 className="text-sm font-medium text-slate-300 mb-3">3. Pilih Mode</h3>
               <ModeSelector
                 value={mode}
                 onChange={setMode}
@@ -175,7 +217,7 @@ export function ImportTab() {
           {preview && step === 'preview' && (
             <>
               <div className="border-t border-slate-700 pt-6">
-                <h3 className="text-sm font-medium text-slate-300 mb-3">3. Preview Data</h3>
+                <h3 className="text-sm font-medium text-slate-300 mb-3">4. Preview Data</h3>
                 <ImportPreview
                   preview={preview}
                   onConfirm={handleConfirm}

@@ -6,11 +6,13 @@ import { useAuth } from '../contexts/AuthContext'
 import { Input } from '../components/ui/Input'
 import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
-import { LogIn } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { LogIn, Eye, EyeOff } from 'lucide-react'
 
 const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
+  rememberMe: z.boolean().optional(),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -19,6 +21,7 @@ export default function LoginPage() {
   const { login } = useAuth()
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -28,7 +31,7 @@ export default function LoginPage() {
     try {
       setIsLoading(true)
       setError(null)
-      await login(data.username, data.password)
+      await login(data.username, data.password, data.rememberMe ?? true)
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed')
     } finally {
@@ -64,12 +67,33 @@ export default function LoginPage() {
               {...register('username')}
             />
             <Input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               label="Password"
               placeholder="Enter your password"
               error={errors.password?.message}
+              rightIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="hover:text-[var(--text-primary)] focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
               {...register('password')}
             />
+
+            <div className="flex items-center">
+              <input
+                id="rememberMe"
+                type="checkbox"
+                className="w-4 h-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500"
+                {...register('rememberMe')}
+              />
+              <label htmlFor="rememberMe" className="ml-2 text-sm text-[var(--text-secondary)] cursor-pointer">
+                Remember me
+              </label>
+            </div>
 
             <Button
               type="submit"
@@ -81,6 +105,13 @@ export default function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
+
+          <div className="mt-6 text-center text-sm">
+            <span className="text-[var(--text-muted)]">Don't have an account? </span>
+            <Link to="/register" className="text-cyan-500 hover:text-cyan-400 font-medium">
+              Sign up
+            </Link>
+          </div>
 
           <div className="mt-6 pt-4 border-t border-[var(--border)] text-center">
             <p className="text-xs text-[var(--text-muted)]">Demo credentials: admin / admin123</p>

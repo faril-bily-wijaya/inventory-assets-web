@@ -1,4 +1,38 @@
-# Task 3: Create Base UI Components
+# Task 3: Update Frontend Types
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Update `Device` interface and `DeviceFormData` interface in `frontend/src/types/index.ts` to include the 4 new fields.
+
+## File to Modify
+
+`frontend/src/types/index.ts`
+
+## Exact Changes
+
+1. Add these 4 fields to the `Device` interface (around line 113, before `locationId`):
+
+```typescript
+uuid?: string
+organizationName?: string
+organizationUuid?: string
+organizationSname?: string
+```
+
+2. Add the same 4 fields to the `DeviceFormData` interface (around line 179).
+
+## Acceptance Criteria
+
+- [ ] 4 new fields added to Device interface
+- [ ] 4 new fields added to DeviceFormData interface
+- [ ] No TypeScript errors
+
+## Context
+
+Task 1 added the fields to the database schema, Task 2 updated the import service. This task adds TypeScript types for the frontend to consume the new fields.
 
 **Location in Plan:** Phase 2, Task 3
 

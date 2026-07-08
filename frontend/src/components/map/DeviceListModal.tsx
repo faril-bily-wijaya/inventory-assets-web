@@ -153,7 +153,8 @@ export function DeviceListModal({ isOpen, onClose, locationName, catuDaya, nonCa
                       </span>
                       {device.brand && <span>{device.brand}</span>}
                       {device.year && <span>{device.year}</span>}
-                      {device.room && <span>{device.room}</span>}
+                      {device.ruanganName && <span>{device.ruanganName}</span>}
+                      {device.kapasitas && <span>{device.kapasitas} {device.satuanKapasitas || ''}</span>}
                     </div>
                     {device.butuhModernisasi && device.alasan && (
                       <p className="mt-2 text-xs text-amber-400">
@@ -161,11 +162,13 @@ export function DeviceListModal({ isOpen, onClose, locationName, catuDaya, nonCa
                       </p>
                     )}
                   </div>
-                  <Badge variant={
-                    device.status === 'active' ? 'success' :
+                  <Badge 
+                    variant={
+                    ['aktif', 'active', 'operational'].includes(device.status?.toLowerCase()) ? 'success' :
                     device.status === 'warning' ? 'warning' :
-                    device.status === 'critical' ? 'danger' : 'muted'
-                  }>
+                    ['critical', 'rusak'].includes(device.status?.toLowerCase()) ? 'danger' : 'muted'
+                    }
+                  >
                     {device.status}
                   </Badge>
                 </div>

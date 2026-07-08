@@ -1,4 +1,44 @@
-# Task 5: Create Auth Routes and Middleware
+# Task 5: Update DevicesPage Table
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Update `frontend/src/pages/DevicesPage.tsx` to add a new table column for Organization data.
+
+## File to Modify
+
+`frontend/src/pages/DevicesPage.tsx`
+
+## Steps
+
+1. Add a new `<th>` column in the table header (after Location column, before Actions):
+```tsx
+<th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Organization</th>
+```
+
+2. Add a new `<td>` in each table row (same position as header):
+```tsx
+<td className="p-4 text-sm text-[var(--text-secondary)]">
+  {device.organizationSname ? (
+    <div className="flex flex-col">
+      <span className="font-medium text-[var(--text-primary)]">{device.organizationSname}</span>
+      {device.organizationName && (
+        <span className="text-xs opacity-75">{device.organizationName}</span>
+      )}
+    </div>
+  ) : '-'}
+</td>
+```
+
+3. Update `colSpan` in the empty state rows (lines 243 and 253) if needed to include the new column.
+
+## Acceptance Criteria
+
+- [ ] New Organization column added to table header
+- [ ] Organization data displayed in each row
+- [ ] Empty state handled gracefully
 
 **Location in Plan:** Phase 3, Task 5
 

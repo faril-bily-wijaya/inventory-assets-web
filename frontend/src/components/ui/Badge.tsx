@@ -2,36 +2,38 @@ import { type HTMLAttributes, forwardRef } from 'react'
 import { cn } from '../../utils/cn'
 
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  variant?: 'success' | 'warning' | 'danger' | 'muted' | 'accent'
+  variant?: 'success' | 'warning' | 'danger' | 'muted' | 'accent' | 'info'
 }
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
   ({ className, variant = 'muted', children, ...props }, ref) => {
     const variants = {
-      success: 'bg-emerald-500/15 text-emerald-400',
-      warning: 'bg-amber-500/15 text-amber-400',
-      danger: 'bg-red-500/15 text-red-400',
-      muted: 'bg-[var(--bg-elevated)] text-[var(--text-muted)]',
-      accent: 'bg-cyan-500/15 text-cyan-400',
+      success: 'badge-success',
+      warning: 'badge-warning',
+      danger: 'badge-danger',
+      muted: 'badge-muted',
+      accent: 'badge bg-blue-500/15 text-blue-400',
+      info: 'badge bg-cyan-500/15 text-cyan-400 border border-cyan-500/20',
     }
 
     return (
       <span
         ref={ref}
         className={cn(
-          'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium',
+          'badge',
           variants[variant],
           className
         )}
         {...props}
       >
         <span className={cn(
-          'w-1.5 h-1.5 rounded-full',
-          variant === 'success' && 'bg-emerald-400',
-          variant === 'warning' && 'bg-amber-400',
-          variant === 'danger' && 'bg-red-400 animate-pulse',
-          variant === 'muted' && 'bg-[var(--text-muted)]',
-          variant === 'accent' && 'bg-cyan-400',
+          'w-1.5 h-1.5 rounded-full shadow-sm',
+          variant === 'success' && 'marker-active bg-emerald-400',
+          variant === 'warning' && 'marker-warning bg-amber-400',
+          variant === 'danger' && 'marker-critical bg-red-400',
+          variant === 'muted' && 'bg-slate-400',
+          variant === 'accent' && 'bg-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]',
+          variant === 'info' && 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.5)]',
         )} />
         {children}
       </span>

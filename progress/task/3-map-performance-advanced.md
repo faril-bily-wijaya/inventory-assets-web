@@ -1,0 +1,3 @@
+- [x] Task 1: Memisahkan Loading Peta & Dropdown (Modifikasi `MapContext.tsx`)
+- [x] Task 2: Memangkas Lokasi Kosong di Database (Modifikasi `/api/locations/map-data` di `locations.routes.ts`)
+- [x] Task 3: Menambahkan Sistem Memory-Cache (Modifikasi `locations.routes.ts` & `devices.routes.ts` untuk invalidate cache)

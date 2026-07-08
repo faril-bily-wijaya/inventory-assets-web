@@ -1,0 +1,3 @@
+- [x] Task 1: Memperbaiki Modernisasi di Peta (Map Pop-up) (Modifikasi `locations.routes.ts`)
+- [x] Task 2: Menambahkan Indikator Modernisasi di Tabel Devices (Modifikasi `devices.routes.ts` & `DevicesPage.tsx`)
+- [x] Task 3: Menambah Filter "STO (Lokasi)" pada Sidebar Peta (Modifikasi `FilterPanel.tsx`, `MapContext.tsx`, & `locations.routes.ts`)

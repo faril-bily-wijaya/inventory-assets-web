@@ -7,7 +7,7 @@ interface User {
   username: string
   email: string
   fullName?: string
-  role: 'ADMIN' | 'USER'
+  role: 'ADMIN' | 'STAFF'
 }
 
 interface AuthContextType {
@@ -15,7 +15,9 @@ interface AuthContextType {
   token: string | null
   isLoading: boolean
   isAuthenticated: boolean
-  login: (username: string, password: string) => Promise<void>
+  login: (username: string, password: string, rememberMe?: boolean) => Promise<void>
+  register: (data: any) => Promise<void>
+  updateProfile: (data: any) => Promise<void>
   logout: () => void
 }
 
@@ -32,8 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    const storedUser = localStorage.getItem('user')
+    const storedToken = sessionStorage.getItem('token') || localStorage.getItem('token')
+    const storedUser = sessionStorage.getItem('user') || localStorage.getItem('user')
 
     if (storedToken && storedUser) {
       setToken(storedToken)
@@ -43,8 +45,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false)
   }, [])
 
-  const login = async (username: string, password: string) => {
+  const login = async (username: string, password: string, rememberMe: boolean = true) => {
     const response = await api.post('/auth/login', { username, password })
+    const { token: newToken, user: newUser } = response.data
+
+    const storage = rememberMe ? localStorage : sessionStorage
+    storage.setItem('token', newToken)
+    storage.setItem('user', JSON.stringify(newUser))
+
+    setToken(newToken)
+    setUser(newUser)
+    api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+
+    navigate('/')
+  }
+
+  const registerUser = async (data: any) => {
+    const response = await api.post('/auth/register', data)
     const { token: newToken, user: newUser } = response.data
 
     localStorage.setItem('token', newToken)
@@ -57,9 +74,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/')
   }
 
+  const updateProfile = async (data: any) => {
+    const response = await api.put('/auth/me', data)
+    const { user: updatedUser } = response.data
+
+    const isRemembered = localStorage.getItem('token') !== null
+    const storage = isRemembered ? localStorage : sessionStorage
+    
+    storage.setItem('user', JSON.stringify(updatedUser))
+    setUser(updatedUser)
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
     setToken(null)
     setUser(null)
     delete api.defaults.headers.common['Authorization']
@@ -67,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, isAuthenticated: !!user, login, register: registerUser, updateProfile, logout }}>
       {children}
     </AuthContext.Provider>
   )

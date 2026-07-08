@@ -11,6 +11,9 @@ import { DeviceModal } from '../components/modals/DeviceModal'
 import { ConfirmModal } from '../components/modals/ConfirmModal'
 import { ImportTab } from '../components/import/ImportTab'
 import toast from 'react-hot-toast'
+import { SidebarNav } from '../components/layout/SidebarNav'
+import { Select } from '../components/ui/Select'
+import { useMapContext } from '../contexts/MapContext'
 
 type TabType = 'list' | 'import'
 
@@ -27,12 +30,31 @@ export default function DevicesPage() {
   const [deletingDevice, setDeletingDevice] = useState<Device | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  useEffect(() => { loadDevices() }, [pagination.page])
+  // Filters
+  const { locations } = useMapContext()
+  const [statusFilter, setStatusFilter] = useState('')
+  const [conditionFilter, setConditionFilter] = useState('')
+  const [locationFilter, setLocationFilter] = useState('')
+  const [deviceCategory, setDeviceCategory] = useState<'all' | 'genset'>('all')
+
+  useEffect(() => {
+    setPagination(prev => ({ ...prev, page: 1 }))
+  }, [statusFilter, conditionFilter, locationFilter, deviceCategory])
+
+  useEffect(() => { loadDevices() }, [pagination.page, statusFilter, conditionFilter, locationFilter, deviceCategory])
 
   const loadDevices = async () => {
     try {
       setIsLoading(true)
-      const filters: DeviceFilters = { page: pagination.page, limit: pagination.limit, search: searchTerm || undefined }
+      const filters: DeviceFilters = { 
+        page: pagination.page, 
+        limit: pagination.limit, 
+        search: searchTerm || undefined,
+        status: statusFilter || undefined,
+        condition: conditionFilter || undefined,
+        locationId: locationFilter || undefined,
+        deviceType: deviceCategory === 'genset' ? 'Genset Mobile,Genset Mobil,Dummy Load' : undefined,
+      }
       const response = await deviceService.getDevices(filters)
       setDevices(response.devices)
       setPagination(response.pagination)
@@ -96,15 +118,21 @@ export default function DevicesPage() {
     }
   }
 
-  const statusVariant = { active: 'success', warning: 'warning', critical: 'danger', inactive: 'muted' } as const
+  const getStatusVariant = (status: string) => {
+    const s = status?.toUpperCase() || ''
+    if (['AKTIF', 'OPERATIONAL', 'ACTIVE'].includes(s)) return 'success'
+    if (['WARNING'].includes(s)) return 'warning'
+    if (['CRITICAL', 'RUSAK'].includes(s)) return 'danger'
+    return 'muted'
+  }
 
   return (
-    <PageContainer>
+    <PageContainer sidebar={<SidebarNav />}>
       <div className="flex-1 overflow-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Devices</h1>
-            <p className="text-[var(--text-muted)]">Manage inventory devices</p>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Dashboard Perangkat</h1>
+            <p className="text-[var(--text-muted)]">Manajemen perangkat inventaris</p>
           </div>
           {activeTab === 'list' && (
             <Button
@@ -118,13 +146,13 @@ export default function DevicesPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex gap-1 p-1 bg-slate-800/50 rounded-lg w-fit mb-6">
+        <div className="flex gap-2 p-1.5 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl w-fit mb-6 shadow-sm">
           <button
             onClick={() => setActiveTab('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
               activeTab === 'list'
-                ? 'bg-cyan-500/20 text-cyan-400'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[var(--bg-card)] text-blue-500 shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/50'
             }`}
           >
             <List className="w-4 h-4" />
@@ -132,10 +160,10 @@ export default function DevicesPage() {
           </button>
           <button
             onClick={() => setActiveTab('import')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
               activeTab === 'import'
-                ? 'bg-cyan-500/20 text-cyan-400'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-[var(--bg-card)] text-blue-500 shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/50'
             }`}
           >
             <Upload className="w-4 h-4" />
@@ -146,18 +174,73 @@ export default function DevicesPage() {
         {/* Tab Content */}
         {activeTab === 'list' ? (
           <>
+        {/* Quick Filter Tabs for Device Category */}
+        <div className="flex gap-2 mb-4 mt-2">
+          <button
+            onClick={() => setDeviceCategory('all')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
+              deviceCategory === 'all'
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 shadow-sm'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
+            }`}
+          >
+            Semua Perangkat
+          </button>
+          <button
+            onClick={() => setDeviceCategory('genset')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${
+              deviceCategory === 'genset'
+                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 shadow-sm'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
+            }`}
+          >
+            ⚡ Genset Mobile
+          </button>
+        </div>
+
         <Card className="mb-6">
-          <div className="flex gap-4">
-            <Input
-              placeholder="Search devices..."
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
-              className="flex-1"
-            />
-            <Button variant="secondary" onClick={handleSearch}>
-              <Search className="w-4 h-4" />
-            </Button>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1 flex gap-2">
+              <Input
+                placeholder="Cari nama, tipe, lokasi, merk, rak..."
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                className="flex-1"
+              />
+              <Button variant="secondary" onClick={handleSearch}>
+                <Search className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="flex gap-4 md:w-1/2">
+              <Select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                options={[
+                  { value: '', label: 'Semua Status' },
+                  { value: 'MODERNISASI', label: 'Perlu Modernisasi' },
+                  { value: 'AKTIF', label: 'Aktif' },
+                  { value: 'IDLE', label: 'Idle' }
+                ]}
+              />
+              <Select
+                value={conditionFilter}
+                onChange={e => setConditionFilter(e.target.value)}
+                options={[
+                  { value: '', label: 'Semua Kondisi' },
+                  { value: 'NORMAL', label: 'Normal' },
+                  { value: 'RUSAK', label: 'Rusak' }
+                ]}
+              />
+              <Select
+                value={locationFilter}
+                onChange={e => setLocationFilter(e.target.value)}
+                options={[
+                  { value: '', label: 'All Locations' },
+                  ...locations.map(l => ({ value: l.id, label: l.name }))
+                ]}
+              />
+            </div>
           </div>
         </Card>
 
@@ -170,62 +253,165 @@ export default function DevicesPage() {
         )}
 
         <Card padding="none">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[var(--border)]">
-                  <th className="p-4">
+          <div className="overflow-auto max-h-[calc(100vh-280px)] custom-scrollbar relative">
+            <table className="w-full text-left border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="border-b border-[var(--border)] bg-[var(--bg-elevated)] shadow-sm">
+                  <th className="p-4 w-12 rounded-tl-lg">
                     <input
                       type="checkbox"
                       checked={selectedDevices.length === devices.length && devices.length > 0}
                       onChange={e => handleSelectAll(e.target.checked)}
-                      className="accent-cyan-500"
+                      className="w-4 h-4 rounded border-[var(--border)] text-cyan-500 focus:ring-cyan-500/30 transition-all cursor-pointer"
                     />
                   </th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Code</th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Name</th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Type</th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Status</th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Location</th>
-                  <th className="p-4 text-left text-xs uppercase text-[var(--text-muted)]">Actions</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Code</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Name</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Type</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Brand & Model</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">SN & Label</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Year & Age</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Condition</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Ruangan & Rak</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Kelistrikan</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Keterangan</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Status</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Location</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Organization</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] text-right rounded-tr-lg">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[var(--border)]">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-[var(--text-muted)]">Loading...</td>
+                    <td colSpan={15} className="p-12 text-center text-[var(--text-muted)]">
+                      <div className="flex flex-col items-center justify-center space-y-3">
+                        <div className="w-8 h-8 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
+                        <p>Memuat data perangkat...</p>
+                      </div>
+                    </td>
                   </tr>
                 ) : devices.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="p-8 text-center text-[var(--text-muted)]">No devices found</td>
+                    <td colSpan={15} className="p-12 text-center text-[var(--text-muted)]">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <Search className="w-8 h-8 opacity-20 mb-2" />
+                        <p>Tidak ada perangkat yang ditemukan.</p>
+                      </div>
+                    </td>
                   </tr>
                 ) : (
                   devices.map(device => (
-                    <tr key={device.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-elevated)]">
+                    <tr 
+                      key={device.id} 
+                      className="group hover:bg-cyan-500/5 transition-colors duration-200"
+                    >
                       <td className="p-4">
                         <input
                           type="checkbox"
                           checked={selectedDevices.includes(device.id)}
                           onChange={() => handleSelect(device.id)}
-                          className="accent-cyan-500"
+                          className="w-4 h-4 rounded border-[var(--border)] text-cyan-500 focus:ring-cyan-500/30 transition-all cursor-pointer opacity-50 group-hover:opacity-100"
                         />
                       </td>
-                      <td className="p-4 font-mono text-sm">{device.deviceCode}</td>
-                      <td className="p-4 text-sm">{device.deviceName}</td>
-                      <td className="p-4 text-sm">{device.deviceType}</td>
+                      <td className="p-4 font-mono text-sm text-[var(--text-secondary)]">{device.deviceCode || '-'}</td>
+                      <td className="p-4 text-sm font-medium text-[var(--text-primary)]">{device.deviceName || '-'}</td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">{device.deviceType || '-'}</td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        <div className="flex flex-col">
+                          <span className="font-medium text-[var(--text-primary)]">{device.brand || '-'}</span>
+                          {device.model && <span className="text-xs opacity-75">{device.model}</span>}
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        <div className="flex flex-col">
+                          <span className="font-mono">{device.serialNumber || '-'}</span>
+                          {device.labelCode && <span className="text-xs font-mono opacity-75">{device.labelCode}</span>}
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        <div className="flex flex-col">
+                          <span>{device.year || '-'}</span>
+                          {device.usiaPerangkat !== undefined && <span className="text-xs opacity-75">{device.usiaPerangkat} Tahun</span>}
+                        </div>
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)] capitalize">
+                        {device.condition?.toLowerCase() || '-'}
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        {device.ruanganName ? (
+                          <div className="flex flex-col gap-1">
+                            <div>
+                              <span className="font-semibold">{device.ruanganName}</span>
+                              {(device.ruanganPanjang || device.ruanganLebar || device.ruanganTinggi || device.ruanganLuas) && (
+                                <div className="text-xs opacity-75">
+                                  {device.ruanganPanjang || 0}x{device.ruanganLebar || 0}x{device.ruanganTinggi || 0}m, {device.ruanganLuas || 0}m²
+                                </div>
+                              )}
+                            </div>
+                            {device.rackName && (
+                              <div className="pt-1 border-t border-[var(--border)] border-dashed">
+                                <span className="font-semibold">{device.rackName}</span>
+                                {(device.rackPanjang || device.rackLebar || device.rackTinggi || device.rackLuas) && (
+                                  <div className="text-xs opacity-75">
+                                    {device.rackPanjang || 0}x{device.rackLebar || 0}x{device.rackTinggi || 0}m, {device.rackLuas || 0}m²
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ) : '-'}
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        {(device.kapasitas || device.capReal || device.jenisTegangan || device.bebanArus) ? (
+                          <div className="flex flex-col gap-0.5">
+                            {device.kapasitas && <span className="font-semibold text-[var(--text-primary)]">Kapasitas: {device.kapasitas} {device.satuanKapasitas || ''}</span>}
+                            {device.capReal && <span className="text-xs text-[var(--text-secondary)]">Real: {device.capReal}</span>}
+                            {(device.jenisTegangan || device.bebanArus) && (
+                              <span className="text-xs opacity-75 mt-1">
+                                {device.jenisTegangan || '-'} | {device.bebanArus ? `${device.bebanArus} ${device.satuanBeban || 'A'}` : '-'}
+                              </span>
+                            )}
+                          </div>
+                        ) : '-'}
+                      </td>
+                      <td className="p-4 text-sm text-[var(--text-secondary)] max-w-xs" title={device.keterangan || device.alasan || ''}>
+                        <div className="flex flex-col gap-1 items-start">
+                          {device.butuhModernisasi && (
+                            <span 
+                              className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/20"
+                              title={device.alasan || 'Butuh Modernisasi'}
+                            >
+                              ⚠️ PERLU MODERNISASI
+                            </span>
+                          )}
+                          {device.keterangan && <span className="truncate max-w-full">{device.keterangan}</span>}
+                          {!device.butuhModernisasi && !device.keterangan && <span>-</span>}
+                        </div>
+                      </td>
                       <td className="p-4">
-                        <Badge variant={statusVariant[device.status as keyof typeof statusVariant]}>
+                        <Badge variant={getStatusVariant(device.status)}>
                           {device.status}
                         </Badge>
                       </td>
                       <td className="p-4 text-sm text-[var(--text-muted)]">{device.location?.name || '-'}</td>
-                      <td className="p-4">
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleEdit(device)}>
-                            <Pencil className="w-4 h-4" />
+                      <td className="p-4 text-sm text-[var(--text-secondary)]">
+                        {device.organizationSname ? (
+                          <div className="flex flex-col">
+                            <span className="font-medium text-[var(--text-primary)]">{device.organizationSname}</span>
+                            {device.organizationName && (
+                              <span className="text-xs opacity-75">{device.organizationName}</span>
+                            )}
+                          </div>
+                        ) : '-'}
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex gap-2 justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          <Button variant="secondary" size="sm" onClick={() => handleEdit(device)} className="h-8 w-8 p-0">
+                            <Pencil className="w-4 h-4 text-[var(--text-secondary)]" />
                           </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDelete(device)}>
-                            <Trash2 className="w-4 h-4 text-red-400" />
+                          <Button variant="danger" size="sm" onClick={() => handleDelete(device)} className="h-8 w-8 p-0 bg-red-500/10 hover:bg-red-500 border-none group/btn">
+                            <Trash2 className="w-4 h-4 text-red-500 group-hover/btn:text-white transition-colors" />
                           </Button>
                         </div>
                       </td>

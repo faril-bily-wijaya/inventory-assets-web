@@ -1,25 +1,26 @@
-import { PageContainer } from '../components/layout/PageContainer'
+import { useEffect } from 'react'
 import { MapView } from '../components/map/MapView'
-import { FilterPanel } from '../components/sidebar/FilterPanel'
-import { QuickStats } from '../components/sidebar/QuickStats'
+import { DashboardSidebar } from '../components/sidebar/DashboardSidebar'
+import { AnalyticsModal } from '../components/map/AnalyticsModal'
+import { LocationTableModal } from '../components/map/LocationTableModal'
+import { useMapContext } from '../contexts/MapContext'
 
 export default function DashboardPage() {
-  return (
-    <PageContainer sidebar={<SidebarContent />}>
-      <div className="h-full flex flex-col">
-        <div className="flex-1 relative">
-          <MapView />
-        </div>
-      </div>
-    </PageContainer>
-  )
-}
+  const { refreshMapData } = useMapContext()
 
-function SidebarContent() {
+  useEffect(() => {
+    refreshMapData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
-    <>
-      <QuickStats />
-      <FilterPanel />
-    </>
+    <div className="flex h-screen w-full overflow-hidden font-sans relative bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+      <DashboardSidebar />
+      <div className="flex-1 relative z-0">
+        <MapView />
+      </div>
+      <AnalyticsModal />
+      <LocationTableModal />
+    </div>
   )
 }

@@ -1,0 +1,906 @@
+{
+  "REKAP": [
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobil",
+      "Distrik": "Bengkulu",
+      "STO": "Bengkulu Centrum",
+      "Kapasitas (KVA) / A": "15 kVa",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobil",
+      "Distrik": "Bengkulu",
+      "STO": "Lubuk Linggau",
+      "Kapasitas (KVA) / A": "150 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Jambi",
+      "STO": "Mendalo",
+      "Kapasitas (KVA) / A": "35 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BANDA ACEH",
+      "STO": "Lamteumen",
+      "MERK": "JHONDARE",
+      "Kapasitas (KVA) / A": 20,
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Jambi",
+      "STO": "Muara Bungo",
+      "Kapasitas (KVA) / A": "150 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Dummy Load",
+      "Distrik": "BANDA ACEH",
+      "STO": "Banda Aceh",
+      "MERK": "-",
+      "Kapasitas (KVA) / A": 250,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "LAMPUNG",
+      "STO": "KEDATON",
+      "Kapasitas (KVA) / A": "225 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "LAMPUNG",
+      "STO": "KALIANDA",
+      "Kapasitas (KVA) / A": "150 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "LAMPUNG",
+      "STO": "KRUI",
+      "Kapasitas (KVA) / A": "50 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BINJAI",
+      "STO": "Lhokseumawe",
+      "MERK": "VOLVO",
+      "Kapasitas (KVA) / A": 200,
+      "Kondisi": "Rusak",
+      "MYASSET ID": "TIF1-LSM-08-0001-00123",
+      "KETERANGAN": "Overhaule karna air radiator sudah bercampur dengan "
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Dummy Load",
+      "Distrik": "PEMATANG SIANTAR",
+      "STO": "pematangsiantar centrum",
+      "MERK": "-",
+      "Kapasitas (KVA) / A": 500,
+      "Kondisi": "Bagus",
+      "KETERANGAN": "dumy load berukuran besar sehingga tidak memungkinkan untuk di kelilingkan ke sto sto"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobil",
+      "Distrik": "Palembang",
+      "STO": "Palembang Centrum",
+      "Kapasitas (KVA) / A": "35Kva",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Palembang",
+      "STO": "Palembang Centrum",
+      "Kapasitas (KVA) / A": "25Kva",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Palembang",
+      "STO": "Palembang Centrum",
+      "Kapasitas (KVA) / A": "225Kva",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Palembang",
+      "STO": "Baturaja",
+      "Kapasitas (KVA) / A": "225Kva",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEMATANG SIANTAR",
+      "STO": "tebing tinggi",
+      "MERK": "deutz",
+      "Kapasitas (KVA) / A": 100,
+      "Kondisi": "Rusak",
+      "KETERANGAN": "tidak pernah lagi di test terakhir pemakain tahun 2022 dan batre starter 24 v tidak ada "
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Dummy Load",
+      "Distrik": "MEDAN",
+      "STO": "Medan Centrum",
+      "Kapasitas (KVA) / A": 500,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Dummy Load",
+      "Distrik": "PADANG",
+      "STO": "Padang Centrum",
+      "Kapasitas (KVA) / A": "300 A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Dummy Load",
+      "Distrik": "BATAM",
+      "STO": "BUKIT DANGAS",
+      "Kapasitas (KVA) / A": "500 A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Dummy Load",
+      "Distrik": "BATAM",
+      "STO": "TANJUNG PINANG",
+      "Kapasitas (KVA) / A": "500 A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Dummy Load",
+      "Distrik": "PEKANBARU",
+      "STO": "Pekanbaru Centrum",
+      "Kapasitas (KVA) / A": "1000 A",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BINJAI",
+      "STO": "Langsa",
+      "MERK": "DEUTZ",
+      "Kapasitas (KVA) / A": 35,
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BATAM",
+      "STO": "KABIL",
+      "Kapasitas (KVA) / A": "50 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BINJAI",
+      "STO": "Stabat",
+      "MERK": "Deutz",
+      "Kapasitas (KVA) / A": 100,
+      "Kondisi": "Rusak",
+      "KETERANGAN": "Overhaule karna air radiator sudah bercampur dengan oli"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PADANG",
+      "STO": "Padang Centrum",
+      "Kapasitas (KVA) / A": "45 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BATAM",
+      "STO": "SAGULUNG",
+      "Kapasitas (KVA) / A": "250 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BATAM",
+      "STO": "TANJUNG UBAN",
+      "Kapasitas (KVA) / A": "25 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BATAM",
+      "STO": "TANJUNG BALAI KARIMUN",
+      "Kapasitas (KVA) / A": "15 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEKANBARU",
+      "STO": "Rengat",
+      "Kapasitas (KVA) / A": "50 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEKANBARU",
+      "STO": "Pekanbaru Centrum",
+      "Kapasitas (KVA) / A": "20 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BANDA ACEH",
+      "STO": "Sigli",
+      "MERK": "DEUTZ",
+      "Kapasitas (KVA) / A": 50,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEKANBARU",
+      "STO": "Selensen",
+      "Kapasitas (KVA) / A": "15 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBT",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEKANBARU",
+      "STO": "Arengka",
+      "Kapasitas (KVA) / A": "250 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BANDA ACEH",
+      "STO": "Meulaboh",
+      "MERK": "DEUTZ",
+      "Kapasitas (KVA) / A": 150,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Dummy Load",
+      "Distrik": "Palembang",
+      "STO": "Palembang Centrum",
+      "Kapasitas (KVA) / A": "500A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Dummy Load",
+      "Distrik": "Palembang",
+      "STO": "Talang Kelapa",
+      "Kapasitas (KVA) / A": "500A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BANDA ACEH",
+      "STO": "Subulussalam",
+      "MERK": "DEUTZ",
+      "Kapasitas (KVA) / A": 35,
+      "Kondisi": "Bagus",
+      "MYASSET ID": "TIF1-SUS-06-0001-00042"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BANDA ACEH",
+      "STO": "Banda Aceh",
+      "MERK": "DEUTZ",
+      "Kapasitas (KVA) / A": 20,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Bengkulu",
+      "STO": "Bengkulu Centrum",
+      "Kapasitas (KVA) / A": "250 kVa",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "Babel",
+      "STO": "Kelapa",
+      "Kapasitas (KVA) / A": "35 KVA",
+      "Kondisi": "Rusak"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Dummy Load",
+      "Distrik": "Jambi",
+      "STO": "Jambi Centrum",
+      "Kapasitas (KVA) / A": "250 KVA",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "BINJAI",
+      "STO": "IDI",
+      "MERK": "Carterpilar",
+      "Kapasitas (KVA) / A": 25,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "MEDAN",
+      "STO": "JPTA / Tembung SBB",
+      "MERK": "Volvo / stamford",
+      "Kapasitas (KVA) / A": 250,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PADANG SIDEMPUAN",
+      "STO": "sipirok",
+      "MERK": "deutz / siemens",
+      "Kapasitas (KVA) / A": 25,
+      "Kondisi": "Bagus",
+      "KETERANGAN": "batre starter 12 v tidak ada "
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEMATANG SIANTAR",
+      "STO": "pematangsiantar centrum",
+      "MERK": "bisma / leroy somer",
+      "Kapasitas (KVA) / A": 50,
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBU",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "PEMATANG SIANTAR",
+      "STO": "pematangsiantar centrum",
+      "MERK": "bisma / newage",
+      "Kapasitas (KVA) / A": 30,
+      "Kondisi": "Bagus",
+      "KETERANGAN": "tidak ada avr "
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Dummy Load",
+      "Distrik": "LAMPUNG",
+      "STO": "TANJUNG KARANG",
+      "Kapasitas (KVA) / A": "500 A",
+      "Kondisi": "Bagus"
+    },
+    {
+      "NO": "SBS",
+      "Perangkat": "Genset Mobile",
+      "Distrik": "LAMPUNG",
+      "STO": "KRUI",
+      "Kapasitas (KVA) / A": "25 KVA",
+      "Kondisi": "Rusak"
+    }
+  ],
+  "SBU": [
+    {
+      "__EMPTY": "NO",
+      "__EMPTY_1": "Perangkat",
+      "__EMPTY_2": "Distrik",
+      "__EMPTY_3": "STO",
+      "__EMPTY_4": "MERK",
+      "__EMPTY_5": "Kapasitas (KVA) / A",
+      "__EMPTY_6": "Kondisi",
+      "__EMPTY_7": "MYASSET ID",
+      "__EMPTY_8": "KETERANGAN"
+    },
+    {
+      "__EMPTY": 1,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Lamteumen",
+      "__EMPTY_4": "JHONDARE",
+      "__EMPTY_5": 20,
+      "__EMPTY_6": "Rusak"
+    },
+    {
+      "__EMPTY": 2,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Sigli",
+      "__EMPTY_4": "DEUTZ",
+      "__EMPTY_5": 50,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 3,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Meulaboh",
+      "__EMPTY_4": "DEUTZ",
+      "__EMPTY_5": 150,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 4,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Subulussalam",
+      "__EMPTY_4": "DEUTZ",
+      "__EMPTY_5": 35,
+      "__EMPTY_6": "Bagus",
+      "__EMPTY_7": "TIF1-SUS-06-0001-00042"
+    },
+    {
+      "__EMPTY": 5,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Banda Aceh",
+      "__EMPTY_4": "DEUTZ",
+      "__EMPTY_5": 20,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 6,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "BANDA ACEH",
+      "__EMPTY_3": "Banda Aceh",
+      "__EMPTY_4": "-",
+      "__EMPTY_5": 250,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 7,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BINJAI",
+      "__EMPTY_3": "Lhokseumawe",
+      "__EMPTY_4": "VOLVO",
+      "__EMPTY_5": 200,
+      "__EMPTY_6": "Rusak",
+      "__EMPTY_7": "TIF1-LSM-08-0001-00123",
+      "__EMPTY_8": "Overhaule karna air radiator sudah bercampur dengan "
+    },
+    {
+      "__EMPTY": 8,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "MEDAN",
+      "__EMPTY_3": "JPTA / Tembung SBB",
+      "__EMPTY_4": "Volvo / stamford",
+      "__EMPTY_5": 250,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 9,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEMATANG SIANTAR",
+      "__EMPTY_3": "pematangsiantar centrum",
+      "__EMPTY_4": "bisma / leroy somer",
+      "__EMPTY_5": 50,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 10,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEMATANG SIANTAR",
+      "__EMPTY_3": "pematangsiantar centrum",
+      "__EMPTY_4": "bisma / newage",
+      "__EMPTY_5": 30,
+      "__EMPTY_6": "Bagus",
+      "__EMPTY_8": "tidak ada avr "
+    },
+    {
+      "__EMPTY": 11,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "PEMATANG SIANTAR",
+      "__EMPTY_3": "pematangsiantar centrum",
+      "__EMPTY_4": "-",
+      "__EMPTY_5": 500,
+      "__EMPTY_6": "Bagus",
+      "__EMPTY_8": "dumy load berukuran besar sehingga tidak memungkinkan untuk di kelilingkan ke sto sto"
+    },
+    {
+      "__EMPTY": 12,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PADANG SIDEMPUAN",
+      "__EMPTY_3": "sipirok",
+      "__EMPTY_4": "deutz / siemens",
+      "__EMPTY_5": 25,
+      "__EMPTY_6": "Bagus",
+      "__EMPTY_8": "batre starter 12 v tidak ada "
+    },
+    {
+      "__EMPTY": 13,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEMATANG SIANTAR",
+      "__EMPTY_3": "tebing tinggi",
+      "__EMPTY_4": "deutz",
+      "__EMPTY_5": 100,
+      "__EMPTY_6": "Rusak",
+      "__EMPTY_8": "tidak pernah lagi di test terakhir pemakain tahun 2022 dan batre starter 24 v tidak ada "
+    },
+    {
+      "__EMPTY": 14,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BINJAI",
+      "__EMPTY_3": "Langsa",
+      "__EMPTY_4": "DEUTZ",
+      "__EMPTY_5": 35,
+      "__EMPTY_6": "Rusak"
+    },
+    {
+      "__EMPTY": 15,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BINJAI",
+      "__EMPTY_3": "IDI",
+      "__EMPTY_4": "Carterpilar",
+      "__EMPTY_5": 25,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 16,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BINJAI",
+      "__EMPTY_3": "Stabat",
+      "__EMPTY_4": "Deutz",
+      "__EMPTY_5": 100,
+      "__EMPTY_6": "Rusak",
+      "__EMPTY_8": "Overhaule karna air radiator sudah bercampur dengan oli"
+    },
+    {
+      "__EMPTY": 17,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "MEDAN",
+      "__EMPTY_3": "Medan Centrum",
+      "__EMPTY_5": 500,
+      "__EMPTY_6": "Bagus"
+    },
+    {
+      "__EMPTY": 18
+    },
+    {
+      "__EMPTY": 19
+    },
+    {
+      "__EMPTY": 20
+    },
+    {
+      "__EMPTY": 21
+    },
+    {
+      "__EMPTY": 22
+    },
+    {
+      "__EMPTY": 23
+    },
+    {
+      "__EMPTY": 24
+    },
+    {
+      "__EMPTY": 25
+    }
+  ],
+  "SBT": [
+    {
+      "__EMPTY": "NO",
+      "__EMPTY_1": "Perangkat",
+      "__EMPTY_2": "Distrik",
+      "__EMPTY_3": "STO",
+      "__EMPTY_4": "Kapasitas (KVA)",
+      "__EMPTY_5": "Kondisi",
+      "__EMPTY_6": "MYASSET ID",
+      "__EMPTY_7": "KETERANGAN"
+    },
+    {
+      "__EMPTY": 1,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "PADANG",
+      "__EMPTY_3": "Padang Centrum",
+      "__EMPTY_4": "300 A",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 3,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "BUKIT DANGAS",
+      "__EMPTY_4": "500 A",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "BELUM MASUK MY ASSET",
+      "__EMPTY_7": "-"
+    },
+    {
+      "__EMPTY": 4,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "TANJUNG PINANG",
+      "__EMPTY_4": "500 A",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "BELUM MASUK MY ASSET",
+      "__EMPTY_7": "-"
+    },
+    {
+      "__EMPTY": 10,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "PEKANBARU",
+      "__EMPTY_3": "Pekanbaru Centrum",
+      "__EMPTY_4": "1000 A",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_7": "Ketika Di konek ke battery selektor atau MCB belum di Up, Sudah mengeluarkan arus 30 ampere, perlu perbaikan selektor"
+    },
+    {
+      "__EMPTY": 2,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PADANG",
+      "__EMPTY_3": "Padang Centrum",
+      "__EMPTY_4": "45 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_7": "Rekondisi DEG mobile menjadi DEG portabel"
+    },
+    {
+      "__EMPTY": 5,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "SAGULUNG",
+      "__EMPTY_4": "250 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_6": "BELUM MASUK MY ASSET",
+      "__EMPTY_7": "Selang Pipa radiator rusak"
+    },
+    {
+      "__EMPTY": 6,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "KABIL",
+      "__EMPTY_4": "50 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "BELUM MASUK MY ASSET",
+      "__EMPTY_7": "-"
+    },
+    {
+      "__EMPTY": 7,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "TANJUNG UBAN",
+      "__EMPTY_4": "25 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "TIF1-TUB-01-0007-00026",
+      "__EMPTY_7": "-"
+    },
+    {
+      "__EMPTY": 8,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "BATAM",
+      "__EMPTY_3": "TANJUNG BALAI KARIMUN",
+      "__EMPTY_4": "15 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "BELUM MASUK MY ASSET",
+      "__EMPTY_7": "-"
+    },
+    {
+      "__EMPTY": 9,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEKANBARU",
+      "__EMPTY_3": "Pekanbaru Centrum",
+      "__EMPTY_4": "20 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_7": "Selenoide tidak ada/ rusak perlu penggantian"
+    },
+    {
+      "__EMPTY": 11,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEKANBARU",
+      "__EMPTY_3": "Rengat",
+      "__EMPTY_4": "50 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_7": "Perlu Service"
+    },
+    {
+      "__EMPTY": 12,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEKANBARU",
+      "__EMPTY_3": "Selensen",
+      "__EMPTY_4": "15 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_7": "Perlu pengecekan lebih lanjut, secara history belum di ketahui rusaknya"
+    },
+    {
+      "__EMPTY": 13,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "PEKANBARU",
+      "__EMPTY_3": "Arengka",
+      "__EMPTY_4": "250 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_7": "Tidak bisa menyala indikasi fuelpump bermasalah perlu inpeksi pengecekan lebih lanjut"
+    }
+  ],
+  "SBS": [
+    {
+      "__EMPTY": "NO",
+      "__EMPTY_1": "Perangkat",
+      "__EMPTY_2": "Distrik",
+      "__EMPTY_3": "STO",
+      "__EMPTY_4": "Kapasitas",
+      "__EMPTY_5": "Kondisi",
+      "__EMPTY_6": "Keterangan",
+      "__EMPTY_7": "MYASSET ID"
+    },
+    {
+      "__EMPTY": 1,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Palembang Centrum",
+      "__EMPTY_4": "25Kva",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 2,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Palembang Centrum",
+      "__EMPTY_4": "225Kva",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "Tidak ada battre starter"
+    },
+    {
+      "__EMPTY": 3,
+      "__EMPTY_1": "Genset Mobil",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Palembang Centrum",
+      "__EMPTY_4": "35Kva",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 4,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Baturaja",
+      "__EMPTY_4": "225Kva",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "Tidak ada battre starter"
+    },
+    {
+      "__EMPTY": 5,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Palembang Centrum",
+      "__EMPTY_4": "500A",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 6,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "Palembang",
+      "__EMPTY_3": "Talang Kelapa",
+      "__EMPTY_4": "500A",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 7,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Bengkulu",
+      "__EMPTY_3": "Bengkulu Centrum",
+      "__EMPTY_4": "250 kVa",
+      "__EMPTY_5": "Rusak"
+    },
+    {
+      "__EMPTY": 8,
+      "__EMPTY_1": "Genset Mobil",
+      "__EMPTY_2": "Bengkulu",
+      "__EMPTY_3": "Bengkulu Centrum",
+      "__EMPTY_4": "15 kVa",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 9,
+      "__EMPTY_1": "Genset Mobil",
+      "__EMPTY_2": "Bengkulu",
+      "__EMPTY_3": "Lubuk Linggau",
+      "__EMPTY_4": "150 KVA",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 10,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Babel",
+      "__EMPTY_3": "Kelapa",
+      "__EMPTY_4": "35 KVA",
+      "__EMPTY_5": "Rusak"
+    },
+    {
+      "__EMPTY": 11,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "Jambi",
+      "__EMPTY_3": "Jambi Centrum",
+      "__EMPTY_4": "250 KVA",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 12,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Jambi",
+      "__EMPTY_3": "Mendalo",
+      "__EMPTY_4": "35 KVA",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 13,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "Jambi",
+      "__EMPTY_3": "Muara Bungo",
+      "__EMPTY_4": "150 KVA",
+      "__EMPTY_5": "Bagus"
+    },
+    {
+      "__EMPTY": 14,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "LAMPUNG",
+      "__EMPTY_3": "KEDATON",
+      "__EMPTY_4": "225 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "DEUTZ, tidak ada battery starter"
+    },
+    {
+      "__EMPTY": 15,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "LAMPUNG",
+      "__EMPTY_3": "KALIANDA",
+      "__EMPTY_4": "150 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "DEUTZ, tidak ada battery starter"
+    },
+    {
+      "__EMPTY": 16,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "LAMPUNG",
+      "__EMPTY_3": "KRUI",
+      "__EMPTY_4": "50 KVA",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "DEUTZ, tidak ada battery starter"
+    },
+    {
+      "__EMPTY": 17,
+      "__EMPTY_1": "Dummy Load",
+      "__EMPTY_2": "LAMPUNG",
+      "__EMPTY_3": "TANJUNG KARANG",
+      "__EMPTY_4": "500 A",
+      "__EMPTY_5": "Bagus",
+      "__EMPTY_6": "METAPLAS HARMONI"
+    },
+    {
+      "__EMPTY": 18,
+      "__EMPTY_1": "Genset Mobile",
+      "__EMPTY_2": "LAMPUNG",
+      "__EMPTY_3": "KRUI",
+      "__EMPTY_4": "25 KVA",
+      "__EMPTY_5": "Rusak",
+      "__EMPTY_6": "MWM"
+    }
+  ]
+}

@@ -13,11 +13,21 @@ export interface User {
   updatedAt?: string
 }
 
-export interface Regional {
+export interface Area {
   id: string
   name: string
   createdAt: string
   updatedAt: string
+  regionals?: Regional[]
+}
+
+export interface Regional {
+  id: string
+  name: string
+  areaId?: string
+  createdAt: string
+  updatedAt: string
+  area?: Area
   districts?: District[]
 }
 
@@ -45,13 +55,25 @@ export interface Cluster {
 export interface Location {
   id: string
   name: string
+  siteCode?: string
   latitude: number
   longitude: number
-  clusterId: string
+  clusterId?: string
+  areaId?: string
+  regionalId?: string
+  districtId?: string
   classType?: string
   address?: string
+  territory?: string
+  teknisi?: string
+  uuid?: string
+  organizationUuid?: string
+  organizationSname?: string
   createdAt: string
   updatedAt: string
+  area?: Area
+  regional?: Regional
+  district?: District
   cluster?: Cluster
   devices?: Device[]
   _count?: { devices: number }
@@ -65,29 +87,55 @@ export interface Device {
   brand?: string
   model?: string
   serialNumber?: string
+  labelCode?: string
   kapasitas?: string
+  satuanKapasitas?: string
   year?: number
-  room?: string
+  usiaPerangkat?: number
+  ruanganCode?: string
+  ruanganName?: string
+  ruanganPanjang?: number
+  ruanganLebar?: number
+  ruanganTinggi?: number
+  ruanganLuas?: number
+  rackCode?: string
+  rackName?: string
+  rackPanjang?: number
+  rackLebar?: number
+  rackTinggi?: number
+  rackLuas?: number
   status: DeviceStatus
   condition?: string
   capReal?: string
+  jenisTegangan?: string
+  bebanArus?: number
+  satuanBeban?: string
+  keterangan?: string
+  uuid?: string
+  organizationName?: string
+  organizationUuid?: string
+  organizationSname?: string
   locationId: string
   createdAt: string
   updatedAt: string
   deletedAt?: string | null
   location?: Location
+  butuhModernisasi?: boolean
+  alasan?: string
 }
 
 export interface MapMarker {
   id: string
   name: string
+  siteCode?: string
   latitude: number
   longitude: number
   address?: string
   classType?: string
+  teknisi?: string
   deviceCount: number
-  devices: Pick<Device, 'id' | 'deviceCode' | 'deviceName' | 'deviceType' | 'status' | 'condition'>[]
-  hierarchy: { regional: string; district: string; cluster: string }
+  devices: Device[]
+  hierarchy: { area?: string; regional: string; district: string; cluster: string }
   worstStatus: DeviceStatus
 }
 
@@ -104,6 +152,7 @@ export interface DevicesResponse {
 }
 
 export interface HierarchyResponse {
+  areas: Area[]
   regionals: Regional[]
   districts: District[]
   clusters: Cluster[]
@@ -117,6 +166,10 @@ export interface DeviceStats {
   total: number
   byStatus: Record<DeviceStatus, number>
   byType: Record<string, number>
+  byCategory?: {
+    catuDaya: number
+    nonCatuDaya: number
+  }
 }
 
 export interface LoginRequest {
@@ -136,12 +189,34 @@ export interface DeviceFormData {
   brand?: string
   model?: string
   serialNumber?: string
+  labelCode?: string
   kapasitas?: string
+  satuanKapasitas?: string
   year?: number
-  room?: string
+  usiaPerangkat?: number
   status: DeviceStatus
   condition?: string
   capReal?: string
+  jenisTegangan?: string
+  bebanArus?: number
+  satuanBeban?: string
+  keterangan?: string
+  ruanganCode?: string
+  ruanganName?: string
+  ruanganPanjang?: number
+  ruanganLebar?: number
+  ruanganTinggi?: number
+  ruanganLuas?: number
+  rackCode?: string
+  rackName?: string
+  rackPanjang?: number
+  rackLebar?: number
+  rackTinggi?: number
+  rackLuas?: number
+  uuid?: string
+  organizationName?: string
+  organizationUuid?: string
+  organizationSname?: string
   locationId: string
 }
 
@@ -180,10 +255,12 @@ export interface LocationDevicesResponse {
   location: {
     id: string
     name: string
+    siteCode?: string
     latitude: number
     longitude: number
     address?: string
     classType?: string
+    teknisi?: string
     hierarchy: {
       regional?: string
       district?: string

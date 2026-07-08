@@ -4,6 +4,7 @@ import type { ImportPreview, ImportResult, ImportMode, LocationDevicesResponse }
 export interface UploadOptions {
   file: File
   mode: ImportMode
+  importType?: 'default' | 'genset'
 }
 
 export const importService = {
@@ -11,6 +12,9 @@ export const importService = {
     const formData = new FormData()
     formData.append('file', options.file)
     formData.append('mode', options.mode)
+    if (options.importType) {
+      formData.append('importType', options.importType)
+    }
 
     const response = await api.post<ImportPreview>(
       '/devices/import/preview',
@@ -28,6 +32,9 @@ export const importService = {
     const formData = new FormData()
     formData.append('file', options.file)
     formData.append('mode', options.mode)
+    if (options.importType) {
+      formData.append('importType', options.importType)
+    }
 
     const response = await api.post<ImportResultData>(
       '/devices/import',

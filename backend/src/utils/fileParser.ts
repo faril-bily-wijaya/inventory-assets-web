@@ -17,29 +17,54 @@ import * as XLSX from 'xlsx'
 // ---------------------------------------------------------------------------
 
 export interface ParsedRow {
-  code: string
-  name: string
-  sites_name: string
-  jenis: string
-  tahun_operasi: number
-  label_code?: string
-  merk?: string
-  status?: string
-  kondisi?: string
-  kapasitas?: string
-  jenis_tegangan?: string
-  beban_arus?: string | number
+  area?: string
+  regional?: string
+  district?: string
+  cluster?: string
+  site_code?: string
+  site_name: string
+  ruangan_code?: string
   ruangan_name?: string
-  teknisi?: string
+  ruangan_panjang?: number
+  ruangan_lebar?: number
+  ruangan_tinggi?: number
+  ruangan_luas?: number
+  rack_code?: string
+  rack_name?: string
+  rack_panjang?: number
+  rack_lebar?: number
+  rack_tinggi?: number
+  rack_luas?: number
+  device_code: string
+  device_name: string
+  label_code?: string
+  serial_number?: string
+  device_type: string
+  brand?: string
+  model?: string
+  year: number
+  status?: string
+  condition?: string
+  kapasitas?: string
+  satuan_kapasitas?: string
+  jenis_tegangan?: string
+  cap_real?: string
+  beban_arus?: string | number
+  satuan_beban?: string
+  keterangan?: string
+  usia_perangkat?: number
   latitude?: number
   longitude?: number
   address?: string
   class_type?: string
-  region?: string
-  district?: string
+  territory?: string
   organization_name?: string
-  cluster?: string
+  teknisi?: string
+  uuid?: string
+  organization_uuid?: string
+  organization_sname?: string
 }
+
 
 export interface ParseResult {
   data: ParsedRow[]
@@ -53,11 +78,11 @@ export interface ParseResult {
 const MAX_ROWS = 10_000
 
 const REQUIRED_COLUMNS: (keyof ParsedRow)[] = [
-  'code',
-  'name',
-  'sites_name',
-  'jenis',
-  'tahun_operasi',
+  'device_code',
+  'device_name',
+  'site_name',
+  'device_type',
+  'year',
 ]
 
 // ---------------------------------------------------------------------------
@@ -158,45 +183,69 @@ function mapRow(
 ): ParsedRow | null {
   const get = (col: string): unknown => raw[headerMap.get(col) ?? col]
 
-  const code = sanitizeString(get('code'))
-  const name = sanitizeString(get('name'))
-  const sites_name = sanitizeString(get('sites_name'))
-  const jenis = sanitizeString(get('jenis'))
-  const tahun_operasi = parseTahunOperasi(get('tahun_operasi'))
+  const device_code = sanitizeString(get('device_code'))
+  const device_name = sanitizeString(get('device_name'))
+  const site_name = sanitizeString(get('site_name'))
+  const device_type = sanitizeString(get('device_type'))
+  const year = parseTahunOperasi(get('year'))
 
   // Skip completely empty rows
-  if (!code && !name && !sites_name && !jenis && tahun_operasi === undefined) {
+  if (!device_code && !device_name && !site_name && !device_type && year === undefined) {
     return null
   }
 
   return {
-    code: code ?? '',
-    name: name ?? '',
-    sites_name: sites_name ?? '',
-    jenis: jenis ?? '',
-    tahun_operasi: tahun_operasi ?? 0,
+    area: sanitizeString(get('area')),
+    regional: sanitizeString(get('regional')),
+    district: sanitizeString(get('district')),
+    cluster: sanitizeString(get('cluster')),
+    site_name: site_name ?? '',
+    site_code: sanitizeString(get('site_code')),
+    ruangan_code: sanitizeString(get('ruangan_code')),
+    ruangan_name: sanitizeString(get('ruangan_name')),
+    ruangan_panjang: parseOptionalNumber(get('ruangan_panjang')),
+    ruangan_lebar: parseOptionalNumber(get('ruangan_lebar')),
+    ruangan_tinggi: parseOptionalNumber(get('ruangan_tinggi')),
+    ruangan_luas: parseOptionalNumber(get('ruangan_luas')),
+    rack_code: sanitizeString(get('rack_code')),
+    rack_name: sanitizeString(get('rack_name')),
+    rack_panjang: parseOptionalNumber(get('rack_panjang')),
+    rack_lebar: parseOptionalNumber(get('rack_lebar')),
+    rack_tinggi: parseOptionalNumber(get('rack_tinggi')),
+    rack_luas: parseOptionalNumber(get('rack_luas')),
+    device_code: device_code ?? '',
+    device_name: device_name ?? '',
     label_code: sanitizeString(get('label_code')),
-    merk: sanitizeString(get('merk')),
+    serial_number: sanitizeString(get('serial_number')),
+    device_type: device_type ?? '',
+    brand: sanitizeString(get('brand')),
+    model: sanitizeString(get('model')),
+    year: year ?? 0,
     status: sanitizeString(get('status')),
-    kondisi: sanitizeString(get('kondisi')),
+    condition: sanitizeString(get('condition')),
     kapasitas: sanitizeString(get('kapasitas')),
+    satuan_kapasitas: sanitizeString(get('satuan_kapasitas')),
     jenis_tegangan: sanitizeString(get('jenis_tegangan')),
+    cap_real: sanitizeString(get('cap_real')),
     beban_arus: (() => {
       const s = sanitizeString(get('beban_arus'))
-      if (s !== undefined) return s
+      if (s !== undefined && isNaN(Number(s))) return s
       const n = parseOptionalNumber(get('beban_arus'))
       return n
     })(),
-    ruangan_name: sanitizeString(get('ruangan_name')),
-    teknisi: sanitizeString(get('teknisi')),
+    satuan_beban: sanitizeString(get('satuan_beban')),
+    keterangan: sanitizeString(get('keterangan')),
+    usia_perangkat: parseOptionalNumber(get('usia_perangkat')),
     latitude: parseOptionalNumber(get('latitude')),
     longitude: parseOptionalNumber(get('longitude')),
     address: sanitizeString(get('address')),
     class_type: sanitizeString(get('class_type')),
-    region: sanitizeString(get('region')),
-    district: sanitizeString(get('district')),
+    territory: sanitizeString(get('territory')),
     organization_name: sanitizeString(get('organization_name')),
-    cluster: sanitizeString(get('cluster')),
+    teknisi: sanitizeString(get('teknisi')),
+    uuid: sanitizeString(get('uuid')),
+    organization_uuid: sanitizeString(get('organization_uuid')),
+    organization_sname: sanitizeString(get('organization_sname')),
   }
 }
 
@@ -259,12 +308,17 @@ function parseCsv(buffer: Buffer): ParseResult {
 // XLSX parser
 // ---------------------------------------------------------------------------
 
-function parseXlsx(buffer: Buffer): ParseResult {
+function parseXlsx(buffer: Buffer, importType: 'default' | 'genset' = 'default'): ParseResult {
   const errors: string[] = []
   const data: ParsedRow[] = []
 
   const workbook = XLSX.read(buffer, { type: 'buffer', cellDates: false })
-  const sheetName = workbook.SheetNames[0]
+  
+  let sheetName = workbook.SheetNames[0]
+  if (importType === 'genset') {
+    sheetName = workbook.SheetNames.find(n => n.toUpperCase() === 'REKAP') || workbook.SheetNames[0]
+  }
+
   if (!sheetName) {
     return { data: [], errors: ['File Excel tidak memiliki sheet'] }
   }
@@ -282,27 +336,68 @@ function parseXlsx(buffer: Buffer): ParseResult {
     throw new Error(`Jumlah baris melebihi batas maksimum ${MAX_ROWS.toLocaleString()}`)
   }
 
-  // Normalise headers from first row keys
-  const headers = Object.keys(rawRows[0])
+  if (importType === 'genset') {
+    // Genset specific mapping
+    for (let i = 0; i < rawRows.length; i++) {
+      const raw = rawRows[i]
+      const get = (key: string) => raw[Object.keys(raw).find(k => k.trim().toLowerCase().includes(key)) || key]
+      
+      const perangkat = sanitizeString(get('perangkat'))
+      const sto = sanitizeString(get('sto'))
+      const distrik = sanitizeString(get('distrik'))
+      const myassetId = sanitizeString(get('myasset id'))
+      
+      if (!perangkat && !sto) continue
+      
+      let device_type = perangkat || 'Genset Mobile'
+      if (device_type.toLowerCase() === 'genset mobil') device_type = 'Genset Mobile'
 
-  const headerError = validateHeaders(headers)
-  if (headerError) {
-    throw new Error(headerError)
-  }
+      const rawKapasitas = String(get('kapasitas') || '')
+      let kapasitas = ''
+      let satuan_kapasitas = ''
+      const match = rawKapasitas.match(/^(\d+(?:\.\d+)?)\s*([a-zA-Z]+)$/)
+      if (match) {
+        kapasitas = match[1]
+        satuan_kapasitas = match[2].toUpperCase()
+      } else {
+        kapasitas = sanitizeString(rawKapasitas) || ''
+      }
 
-  // Build case-insensitive header map
-  const headerMap = new Map(headers.map((h) => [h.trim().toLowerCase(), h.trim()]))
-
-  for (let i = 0; i < rawRows.length; i++) {
-    const raw = rawRows[i]
-    // Normalise keys by trimming them (XLSX sometimes returns keys with spaces)
-    const normalised: Record<string, unknown> = {}
-    for (const [key, val] of Object.entries(raw)) {
-      normalised[key.trim()] = val
+      data.push({
+        device_code: myassetId || `GM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`, // fallback code if missing
+        device_name: `${device_type} ${sto || ''}`.trim(),
+        site_name: sto || 'Unknown Site',
+        district: distrik,
+        device_type: device_type,
+        year: new Date().getFullYear(),
+        brand: sanitizeString(get('merk')),
+        kapasitas: kapasitas || undefined,
+        satuan_kapasitas: satuan_kapasitas || undefined,
+        condition: sanitizeString(get('kondisi')),
+        keterangan: sanitizeString(get('keterangan')),
+        status: sanitizeString(get('kondisi'))?.toLowerCase() === 'bagus' ? 'OPERATIONAL' : 'RUSAK',
+      })
     }
-    const row = mapRow(normalised, headerMap)
-    if (row !== null) {
-      data.push(row)
+  } else {
+    // Normal mapping
+    const headers = Object.keys(rawRows[0])
+    const headerError = validateHeaders(headers)
+    if (headerError) {
+      throw new Error(headerError)
+    }
+
+    const headerMap = new Map(headers.map((h) => [h.trim().toLowerCase(), h.trim()]))
+
+    for (let i = 0; i < rawRows.length; i++) {
+      const raw = rawRows[i]
+      const normalised: Record<string, unknown> = {}
+      for (const [key, val] of Object.entries(raw)) {
+        normalised[key.trim()] = val
+      }
+      const row = mapRow(normalised, headerMap)
+      if (row !== null) {
+        data.push(row)
+      }
     }
   }
 
@@ -325,6 +420,7 @@ export async function parseFile(
   buffer: Buffer,
   mimeType: string,
   filename: string,
+  importType: 'default' | 'genset' = 'default'
 ): Promise<ParseResult> {
   const ext = filename.toLowerCase().endsWith('.xls')
     ? 'xlsx'
@@ -337,5 +433,5 @@ export async function parseFile(
   }
 
   // Treat everything else (xlsx, xls, vnd.ms-excel) as Excel
-  return parseXlsx(buffer)
+  return parseXlsx(buffer, importType)
 }

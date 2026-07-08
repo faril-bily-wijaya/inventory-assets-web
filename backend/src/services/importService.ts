@@ -70,7 +70,7 @@ const HIERARCHY_DEFAULTS = {
  * Builds the lookup key used for intra-file duplicate detection.
  */
 function buildRowKey(row: ParsedRow): string {
-  return normalise(row.code)
+  return normalise(row.device_code)
 }
 
 /**
@@ -86,20 +86,20 @@ function normalise(s: string | undefined): string {
  */
 function mapDeviceData(row: ParsedRow, location_id: string) {
   return {
-    device_code: normalise(row.code),
-    device_name: normalise(row.name),
-    device_type: normalise(row.jenis),
-    serial_number: normalise(row.label_code) || null,
+    device_code: normalise(row.device_code),
+    device_name: normalise(row.device_name),
+    device_type: normalise(row.device_type),
+    serial_number: normalise(row.serial_number) || normalise(row.label_code) || null,
     label_code: normalise(row.label_code) || null,
-    brand: normalise(row.merk) || null,
-    model: null,
+    brand: normalise(row.brand) || null,
+    model: normalise(row.model) || null,
     kapasitas: normalise(row.kapasitas) || null,
     satuan_kapasitas: normalise(row.satuan_kapasitas) || null,
-    year: row.tahun_operasi > 0 ? row.tahun_operasi : null,
+    year: row.year > 0 ? row.year : null,
     usia_perangkat: row.usia_perangkat ?? null,
     status: normalise(row.status) || 'AKTIF',
-    condition: normalise(row.kondisi) || normalise(row.condition_en) || null,
-    cap_real: normalise(row.jenis_tegangan) || null,
+    condition: normalise(row.condition) || null,
+    cap_real: normalise(row.cap_real) || null,
     jenis_tegangan: normalise(row.jenis_tegangan) || null,
     beban_arus: typeof row.beban_arus === 'number' ? row.beban_arus : null,
     satuan_beban: normalise(row.satuan_beban) || null,
@@ -166,13 +166,13 @@ export async function generateImportPreview(
   const locationNames = new Set<string>()
 
   for (const row of data) {
-    deviceCodeSet.add(normalise(row.code))
+    deviceCodeSet.add(normalise(row.device_code))
 
     const ar = normalise(row.area) || HIERARCHY_DEFAULTS.area
-    const reg = normalise(row.region) || HIERARCHY_DEFAULTS.regional
+    const reg = normalise(row.regional) || HIERARCHY_DEFAULTS.regional
     const dist = normalise(row.district) || HIERARCHY_DEFAULTS.district
     const clus = normalise(row.cluster) || normalise(row.organization_name) || HIERARCHY_DEFAULTS.cluster
-    const loc = normalise(row.sites_name)
+    const loc = normalise(row.site_name)
 
     if (loc) locationNames.add(loc)
     if (clus) clusterNames.add(clus)
@@ -181,8 +181,8 @@ export async function generateImportPreview(
     if (ar) areaNames.add(ar)
 
     // Basic validation
-    if (!row.code) {
-      errors.push(`Baris "${row.name}": code/deviceCode kosong`)
+    if (!row.device_code) {
+      errors.push(`Baris "${row.device_name}": code/deviceCode kosong`)
     }
   }
 
@@ -321,10 +321,10 @@ export async function executeImport(
   // -------------------------------------------------------------------------
   for (const row of uniqueRows) {
     const areaName = normalise(row.area) || HIERARCHY_DEFAULTS.area
-    const regName = normalise(row.region) || HIERARCHY_DEFAULTS.regional
+    const regName = normalise(row.regional) || HIERARCHY_DEFAULTS.regional
     const distName = normalise(row.district) || HIERARCHY_DEFAULTS.district
     const clusterName = normalise(row.cluster) || normalise(row.organization_name) || HIERARCHY_DEFAULTS.cluster
-    const locName = normalise(row.sites_name)
+    const locName = normalise(row.site_name)
 
     // --- Area ---
     let area_id = areaByName.get(areaName)
@@ -370,7 +370,7 @@ export async function executeImport(
       const created = await prisma.locations.create({
         data: {
           name: locName,
-          site_code: normalise(row.sites_code) || null,
+          site_code: normalise(row.site_code) || null,
           latitude: lat,
           longitude: lng,
           cluster_id,
@@ -401,17 +401,17 @@ export async function executeImport(
 
     await Promise.all(
       batch.map(async (row) => {
-        const device_code = normalise(row.code)
-        const locName = normalise(row.sites_name)
+        const device_code = normalise(row.device_code)
+        const locName = normalise(row.site_name)
 
         if (!device_code) {
-          errors.push(`Baris "${row.name}": code/deviceCode kosong`)
+          errors.push(`Baris "${row.device_name}": code/deviceCode kosong`)
           return
         }
 
         const location_id = locByName.get(locName)
         if (!location_id) {
-          errors.push(`Baris "${row.name}": location tidak ditemukan`)
+          errors.push(`Baris "${row.device_name}": location tidak ditemukan`)
           return
         }
 

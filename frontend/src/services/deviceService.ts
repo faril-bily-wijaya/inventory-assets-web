@@ -6,6 +6,7 @@ export interface DeviceFilters {
   limit?: number
   search?: string
   status?: string
+  condition?: string
   deviceType?: string
   locationId?: string
   clusterId?: string

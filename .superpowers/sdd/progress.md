@@ -25,6 +25,21 @@ docs/superpowers/plans/2026-06-30-map-inventory-implementation.md
 
 ---
 
+## Plan 2: Add UUID & Organization Fields
+docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+| Task | Status | Commits | Notes |
+|------|--------|---------|-------|
+| Task 1 | COMPLETE | 0a80b68 | Prisma schema + migration created |
+| Task 2 | IN_PROGRESS | - | Import service update |
+| Task 2 | PENDING | - | Import service update |
+| Task 3 | PENDING | - | Frontend types update |
+| Task 4 | PENDING | - | DeviceModal update |
+| Task 5 | PENDING | - | DevicesPage table update |
+| Task 6 | PENDING | - | Template CSV update |
+
+---
+
 ## Configuration References (from COMPLETE_REBUILD_SCRIPT.md)
 
 ### Supabase

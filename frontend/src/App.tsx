@@ -4,8 +4,12 @@ import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider } from './contexts/AuthContext'
 import { MapProvider } from './contexts/MapContext'
 import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import DevicesPage from './pages/DevicesPage'
+import GensetMobilePage from './pages/GensetMobilePage'
+import UsersManagementPage from './pages/UsersManagementPage'
+import SettingsPage from './pages/SettingsPage'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
 function ProtectedLayout() {
@@ -14,6 +18,9 @@ function ProtectedLayout() {
       <Routes>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/devices" element={<DevicesPage />} />
+        <Route path="/genset-mobile" element={<GensetMobilePage />} />
+        <Route path="/users" element={<UsersManagementPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MapProvider>
@@ -27,6 +34,7 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route
               path="/*"
               element={

@@ -1,4 +1,44 @@
-# Task 1: Setup Frontend Project
+# Task 1: Update Prisma Schema
+
+**Plan:** Add UUID & Organization Fields to Devices
+**Location:** docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
+
+## Requirements
+
+Add 4 new nullable fields to the `devices` model in `backend/prisma/schema.prisma`:
+1. `uuid` - String?, @map("uuid") @db.Uuid
+2. `organization_name` - String?, @map("organization_name") @db.VarChar(255)
+3. `organization_uuid` - String?, @map("organization_uuid") @db.Uuid
+4. `organization_sname` - String?, @map("organization_sname") @db.VarChar(50)
+
+## Current schema location
+
+File: `backend/prisma/schema.prisma`
+Find the `devices` model (starts around line 102) and add these fields after `rack_luas` and before `location_id`.
+
+## Exact fields to add
+
+```prisma
+uuid               String?   @map("uuid") @db.Uuid
+organization_name  String?   @map("organization_name") @db.VarChar(255)
+organization_uuid String?   @map("organization_uuid") @db.Uuid
+organization_sname String?   @map("organization_sname") @db.VarChar(50)
+```
+
+## Commands to run after edit
+
+1. Generate migration: `npx prisma migrate dev --name add_organization_fields_to_devices`
+2. Generate client: `npx prisma generate`
+
+## Acceptance Criteria
+
+- [ ] 4 new fields added to devices model
+- [ ] Migration created successfully
+- [ ] Prisma client generated with new fields
+
+## Context
+
+This is part of adding UUID and organization fields to devices from the CSV import. The fields are needed for tracking devices and organization relationships.
 
 **Location in Plan:** Phase 1, Task 1
 

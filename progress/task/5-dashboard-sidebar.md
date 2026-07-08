@@ -1,0 +1,2 @@
+- [x] Task 1: Memperbaiki Warna Teks di Filter (*UI Fix*) (Modifikasi `DashboardSidebar.tsx`)
+- [x] Task 2: Memindahkan Filter Hierarki & STO ke Sidebar Utama (Modifikasi `DashboardSidebar.tsx` untuk mengambil data `getHierarchy` dan menampilkannya sebagai *select dropdown*)

@@ -142,12 +142,13 @@ export function DeviceSection({ title, icon, devices, variant, onViewMore }: Pro
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                      <Badge variant={
-                        device.status === 'active' ? 'success' :
+                      <Badge 
+                        variant={
+                        ['aktif', 'active', 'operational'].includes(device.status?.toLowerCase()) ? 'success' :
                         device.status === 'warning' ? 'warning' :
-                        device.status === 'critical' ? 'danger' : 'muted'
-                      }>
-                        {device.status}
+                        ['critical', 'rusak'].includes(device.status?.toLowerCase()) ? 'danger' : 'muted'
+                        }
+                      >  {device.status}
                       </Badge>
                       {device.butuhModernisasi && (
                         <Badge variant="warning" className="text-[10px]">Modernisasi</Badge>
