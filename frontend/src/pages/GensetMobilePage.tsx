@@ -48,7 +48,7 @@ export default function GensetMobilePage() {
         search: searchTerm || undefined,
         status: statusFilter || undefined,
         locationId: locationFilter || undefined,
-        deviceType: 'Genset Mobile,Dummy Load'
+        deviceType: 'Genset Mobile,Genset Mobil,Dummy Load'
       }
       const response = await deviceService.getDevices(filters)
       setDevices(response.devices)
