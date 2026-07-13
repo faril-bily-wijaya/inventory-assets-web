@@ -18,7 +18,6 @@ const profileSchema = z.object({
 })
 
 const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required'),
   newPassword: z.string().min(6, 'New password must be at least 6 characters'),
   confirmPassword: z.string().min(6, 'Please confirm your new password'),
 }).refine((data) => data.newPassword === data.confirmPassword, {
@@ -179,18 +178,6 @@ export default function SettingsPage() {
                   <h2 className="text-xl font-bold text-[var(--text-primary)] mb-6">Change Password</h2>
                   
                   <form onSubmit={handleSubmitPassword(onPasswordSubmit)} className="space-y-5">
-                    <Input
-                      type={showCurrentPassword ? 'text' : 'password'}
-                      label="Current Password"
-                      placeholder="Enter current password"
-                      error={passwordErrors.currentPassword?.message}
-                      rightIcon={
-                        <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className="focus:outline-none hover:text-[var(--text-primary)]">
-                          {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      }
-                      {...registerPassword('currentPassword')}
-                    />
                     <Input
                       type={showNewPassword ? 'text' : 'password'}
                       label="New Password"

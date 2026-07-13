@@ -1,4 +1,4 @@
-import { BarChart3, X } from 'lucide-react'
+import { BarChart3, X, PieChart as PieChartIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Label } from 'recharts'
 import { useMapContext } from '../../contexts/MapContext'
@@ -20,8 +20,12 @@ export function AnalyticsModal() {
         const isCD = isCatuDaya(d.deviceType)
         if (filter === 'CATU_DAYA' && !isCD) return false
         if (filter === 'NON_CATU_DAYA' && isCD) return false
+
+        const isGenset = ['genset mobile', 'genset mobil', 'dummy load'].includes(d.deviceType?.toLowerCase() || '')
+        if (filter === 'GENSET_MOBILE' && !isGenset) return false
         
-        if (statusFilter !== 'ALL' && d.status !== statusFilter) return false
+        if (statusFilter === 'MODERNISASI' && !d.butuhModernisasi) return false
+        if (statusFilter !== 'ALL' && statusFilter !== 'MODERNISASI' && d.status !== statusFilter) return false
         if (conditionFilter !== 'ALL' && d.condition !== conditionFilter) return false
         if (brandFilter !== 'ALL' && d.brand !== brandFilter) return false
 
@@ -96,42 +100,56 @@ export function AnalyticsModal() {
               <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Top 10 Lokasi Perangkat Terbanyak</h3>
                 <div className="flex-1 min-h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={topLocations} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
-                      <XAxis type="number" stroke="#64748b" />
-                      <YAxis dataKey="name" type="category" width={160} stroke="#64748b" tick={{fontSize: 10}} interval={0} />
-                      <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '8px', border: 'none', backgroundColor: 'white', color: 'black', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                      <Bar dataKey="Total" fill="#4f46e5" radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {stats.total === 0 ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                      <BarChart3 className="w-12 h-12 mb-3 opacity-20" />
+                      <p className="text-sm font-medium">Tidak ada data perangkat</p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={topLocations} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+                        <XAxis type="number" stroke="#64748b" />
+                        <YAxis dataKey="name" type="category" width={160} stroke="#64748b" tick={{fontSize: 10}} interval={0} />
+                        <RechartsTooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '8px', border: 'none', backgroundColor: 'white', color: 'black', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                        <Bar dataKey="Total" fill="#4f46e5" radius={[0, 4, 4, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </div>
 
               <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-6">Rasio Status Perangkat</h3>
                 <div className="flex-1 min-h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie data={statusPieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
-                        {statusPieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                        <Label 
-                          value={stats.total} 
-                          position="center" 
-                          dy={-10}
-                          className="text-4xl font-extrabold fill-slate-800 dark:fill-slate-100"
-                        />
-                        <Label 
-                          value="Perangkat" 
-                          position="center" 
-                          dy={15}
-                          className="text-xs font-semibold fill-slate-400"
-                        />
-                      </Pie>
-                      <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', backgroundColor: 'white', color: 'black', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                      <Legend verticalAlign="bottom" height={36} wrapperStyle={{ color: '#475569' }}/>
-                    </PieChart>
-                  </ResponsiveContainer>
+                  {stats.total === 0 ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                      <PieChartIcon className="w-12 h-12 mb-3 opacity-20" />
+                      <p className="text-sm font-medium">Tidak ada data status</p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={statusPieData} cx="50%" cy="50%" innerRadius={70} outerRadius={100} paddingAngle={5} dataKey="value" stroke="none">
+                          {statusPieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                          <Label 
+                            value={stats.total} 
+                            position="center" 
+                            dy={-10}
+                            className="text-4xl font-extrabold fill-slate-800 dark:fill-slate-100"
+                          />
+                          <Label 
+                            value="Perangkat" 
+                            position="center" 
+                            dy={15}
+                            className="text-xs font-semibold fill-slate-400"
+                          />
+                        </Pie>
+                        <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', backgroundColor: 'white', color: 'black', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                        <Legend verticalAlign="bottom" height={36} wrapperStyle={{ color: '#475569' }}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  )}
                 </div>
               </div>
             </div>

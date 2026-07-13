@@ -207,26 +207,17 @@ router.put('/me', authMiddleware, async (req: any, res) => {
 })
 
 const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1),
   newPassword: z.string().min(6),
 })
 
 // PUT /api/auth/me/password
 router.put('/me/password', authMiddleware, async (req: any, res) => {
   try {
-    const { currentPassword, newPassword } = changePasswordSchema.parse(req.body)
+    const { newPassword } = changePasswordSchema.parse(req.body)
 
-    const user = await prisma.users.findUnique({
-      where: { id: req.user.id },
-    })
-
+    const user = await prisma.users.findUnique({ where: { id: req.user.id } })
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
-    }
-
-    const isValidPassword = await bcrypt.compare(currentPassword, user.password)
-    if (!isValidPassword) {
-      return res.status(400).json({ error: 'Incorrect current password' })
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10)

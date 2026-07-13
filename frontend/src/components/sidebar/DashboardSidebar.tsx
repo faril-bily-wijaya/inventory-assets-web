@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, MapPin, Zap, Server, Layers, PieChart as PieChartIcon, Download, Filter, BarChart3, Settings, LogOut, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, X } from 'lucide-react'
+import { Search, MapPin, Zap, Server, Layers, PieChart as PieChartIcon, Download, Filter, BarChart3, Settings, LogOut, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, X, Menu } from 'lucide-react'
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts'
 import { useMapContext } from '../../contexts/MapContext'
 import { useAuth } from '../../contexts/AuthContext'
@@ -259,16 +259,24 @@ export function DashboardSidebar() {
     <>
       <div className={`z-20 h-full flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl shadow-2xl border-r border-slate-200 dark:border-slate-800 transition-all duration-300 ${isOpen ? 'w-[360px]' : 'w-0 overflow-hidden'}`}>
         <div className="w-[360px] flex flex-col h-full">
-          <div className="p-6 border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-center">
-        <div>
-          <div className="flex flex-col">
-            <div className="h-10 w-auto">
-              <img src="/Logo.png" alt="Inventory Assets Logo" className="h-full w-auto object-contain" />
+          <div className="p-6 border-b border-slate-200/50 dark:border-slate-800/50 flex justify-between items-start">
+            <div>
+              <div className="flex flex-col">
+                <div className="h-10 w-auto">
+                  <img src="/Logo.png" alt="Inventory Assets Logo" className="h-full w-auto object-contain" />
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Inventori Perangkat</p>
+              </div>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">Inventori Perangkat</p>
+            
+            <button 
+              onClick={() => setIsOpen(false)}
+              className="p-2 -mr-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+              title="Sembunyikan Sidebar"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
           </div>
-        </div>
-      </div>
 
       <div className="p-6 flex-1 overflow-y-auto custom-scrollbar">
         <div className="mb-6 relative group">
@@ -612,13 +620,15 @@ export function DashboardSidebar() {
         </div>
       </div>
 
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`absolute top-1/2 -translate-y-1/2 z-30 flex items-center justify-center w-5 h-12 bg-white dark:bg-slate-800 border-y border-r border-slate-200 dark:border-slate-700 shadow-md rounded-r-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300 ${isOpen ? 'left-[360px]' : 'left-0'}`}
-        title={isOpen ? "Sembunyikan Sidebar" : "Tampilkan Sidebar"}
-      >
-        {isOpen ? <ChevronLeft className="w-4 h-4 text-slate-500" /> : <ChevronRight className="w-4 h-4 text-slate-500" />}
-      </button>
+      {!isOpen && (
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="absolute top-28 left-4 z-[1000] flex items-center justify-center w-12 h-12 bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 rounded-full hover:scale-105 hover:shadow-2xl transition-all duration-300 group"
+          title="Tampilkan Sidebar"
+        >
+          <Menu className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:text-cyan-600 transition-colors" />
+        </button>
+      )}
     </>
   )
 }
