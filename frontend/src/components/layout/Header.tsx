@@ -1,5 +1,4 @@
-import { Sun, Moon, Bell, LogOut, User, Menu, Settings } from 'lucide-react'
-import { useTheme } from '../../contexts/ThemeContext'
+import { Bell, LogOut, User, Menu, Settings } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { Button } from '../ui/Button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/DropdownMenu'
@@ -10,7 +9,6 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
-  const { resolvedTheme, toggleTheme } = useTheme()
   const { user, logout } = useAuth()
 
   return (
