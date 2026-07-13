@@ -128,7 +128,7 @@ export default function DevicesPage() {
 
   return (
     <PageContainer sidebar={<SidebarNav />}>
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-4 sm:p-6 pb-24 sm:pb-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-[var(--text-primary)]">Dashboard Perangkat</h1>
@@ -212,7 +212,7 @@ export default function DevicesPage() {
                 <Search className="w-4 h-4" />
               </Button>
             </div>
-            <div className="flex gap-4 md:w-1/2">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 md:w-1/2">
               <Select
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
@@ -265,20 +265,20 @@ export default function DevicesPage() {
                       className="w-4 h-4 rounded border-[var(--border)] text-cyan-500 focus:ring-cyan-500/30 transition-all cursor-pointer"
                     />
                   </th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Code</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Name</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Type</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Brand & Model</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">SN & Label</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Year & Age</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Condition</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Ruangan & Rak</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Kelistrikan</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Keterangan</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Status</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Location</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Organization</th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] text-right rounded-tr-lg">Actions</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Code</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Name</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Type</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Brand & Model</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">SN & Label</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Year & Age</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Condition</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Ruangan & Rak</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Kelistrikan</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Keterangan</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Status</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Location</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] whitespace-nowrap">Organization</th>
+                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] text-right rounded-tr-lg whitespace-nowrap">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border)]">

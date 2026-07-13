@@ -12,6 +12,28 @@ interface SidebarProps {
 
 export function Sidebar({ children, isOpen = true, onClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [touchStart, setTouchStart] = useState<number | null>(null)
+  const [touchEnd, setTouchEnd] = useState<number | null>(null)
+
+  const minSwipeDistance = 50
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null)
+    setTouchStart(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return
+    const distance = touchStart - touchEnd
+    const isLeftSwipe = distance > minSwipeDistance
+    if (isLeftSwipe && onClose) {
+      onClose()
+    }
+  }
 
   const sidebarWidth = isCollapsed ? 80 : 280
 
@@ -31,6 +53,9 @@ export function Sidebar({ children, isOpen = true, onClose }: SidebarProps) {
       </AnimatePresence>
 
       <motion.aside
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         initial={false}
         animate={{ 
           width: sidebarWidth,
@@ -39,7 +64,7 @@ export function Sidebar({ children, isOpen = true, onClose }: SidebarProps) {
         className={cn(
           'glass-panel border-r-0 lg:border-r border-[var(--border)] flex flex-col',
           'fixed lg:relative inset-y-0 left-0 z-50 shadow-xl lg:shadow-none h-full',
-          'transition-transform duration-300 ease-in-out',
+          'transition-transform duration-300 ease-in-out max-w-[80vw]',
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >

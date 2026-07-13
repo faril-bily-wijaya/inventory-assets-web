@@ -14,17 +14,17 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
   const { user, logout } = useAuth()
 
   return (
-    <header className="h-16 glass z-40 px-6 flex items-center justify-between shadow-sm relative">
+    <header className="h-16 glass z-40 px-3 sm:px-6 flex items-center justify-between shadow-sm relative">
       {/* Left side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         {showMenuButton && (
-          <Button variant="ghost" size="sm" onClick={onMenuClick} className="p-2 lg:hidden">
+          <Button variant="ghost" size="sm" onClick={onMenuClick} className="p-2 lg:hidden shrink-0">
             <Menu className="w-5 h-5" />
           </Button>
         )}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <div className="flex flex-col">
-            <div className="h-8 md:h-10 w-auto">
+            <div className="h-6 sm:h-8 md:h-10 w-auto shrink-0">
               <img src="/Logo.png" alt="Inventory Assets Logo" className="h-full w-auto object-contain" />
             </div>
             <p className="text-[10px] text-[var(--text-muted)] font-medium mt-1">Inventori Perangkat</p>

@@ -143,26 +143,26 @@ export function MapView() {
     <div className="w-full h-full relative">
       <button 
         onClick={handleGPS}
-        className="absolute bottom-6 right-6 z-[1000] p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95"
+        className="absolute bottom-6 right-4 sm:right-6 z-[1000] p-3 sm:p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl border-[3px] sm:border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95"
         title="Lacak Lokasi Saya"
       >
-        <LocateFixed className="w-6 h-6" />
+        <LocateFixed className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
       <button 
         onClick={() => setIsHeatmapMode(!isHeatmapMode)}
-        className={`absolute bottom-24 right-6 z-[1000] p-4 rounded-full shadow-2xl border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95 ${isHeatmapMode ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-800 dark:bg-slate-700 text-slate-300'}`}
+        className={`absolute bottom-20 sm:bottom-24 right-4 sm:right-6 z-[1000] p-3 sm:p-4 rounded-full shadow-2xl border-[3px] sm:border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95 ${isHeatmapMode ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-800 dark:bg-slate-700 text-slate-300'}`}
         title="Mode Heatmap Kerusakan"
       >
-        <Flame className="w-6 h-6" />
+        <Flame className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
       <button 
         onClick={() => setShowCoverArea(!showCoverArea)}
-        className={`absolute bottom-44 right-6 z-[1000] p-4 rounded-full shadow-2xl border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95 ${showCoverArea ? 'bg-cyan-600 text-white' : 'bg-slate-800 dark:bg-slate-700 text-slate-300'}`}
+        className={`absolute bottom-[136px] sm:bottom-44 right-4 sm:right-6 z-[1000] p-3 sm:p-4 rounded-full shadow-2xl border-[3px] sm:border-4 border-white dark:border-slate-800 transition-transform hover:scale-110 active:scale-95 ${showCoverArea ? 'bg-cyan-600 text-white' : 'bg-slate-800 dark:bg-slate-700 text-slate-300'}`}
         title="Tampilkan Cover Area District"
       >
-        <MapIcon className="w-6 h-6" />
+        <MapIcon className="w-5 h-5 sm:w-6 sm:h-6" />
       </button>
 
       <MapContainer center={[-3.5, 103.5]} zoom={7} className="w-full h-full" maxZoom={22}>
