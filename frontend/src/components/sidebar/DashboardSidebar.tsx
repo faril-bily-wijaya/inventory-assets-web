@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, MapPin, Zap, Server, Layers, PieChart as PieChartIcon, Download, Filter, BarChart3, Settings, LogOut, ChevronDown, ChevronLeft, ChevronRight, HelpCircle, X, Menu } from 'lucide-react'
+import { Search, MapPin, Zap, Server, Layers, PieChart as PieChartIcon, Download, Filter, BarChart3, Settings, LogOut, ChevronDown, ChevronLeft, HelpCircle, X, Menu } from 'lucide-react'
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts'
 import { useMapContext } from '../../contexts/MapContext'
 import { useAuth } from '../../contexts/AuthContext'

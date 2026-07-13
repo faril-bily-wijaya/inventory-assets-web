@@ -58,7 +58,7 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
   const isEditing = !!device
 
   const { register, handleSubmit, control, reset, formState: { errors, isSubmitting } } = useForm<DeviceFormValues>({
-    resolver: zodResolver(deviceSchema),
+    resolver: zodResolver(deviceSchema) as any,
     defaultValues: device ? {
       deviceCode: device.deviceCode || '',
       deviceName: device.deviceName || '',
@@ -150,7 +150,7 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSubmit(onSubmit, onError)} isLoading={isSubmitting}>
+          <Button variant="primary" onClick={handleSubmit(onSubmit as any, onError)} isLoading={isSubmitting}>
             {isEditing ? 'Save Changes' : 'Create Device'}
           </Button>
         </>
@@ -255,7 +255,7 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
                 onChange={field.onChange}
                 options={locations.map(l => ({ 
                   value: l.id, 
-                  label: `${l.name} (${l.clusters?.name || 'No Cluster'})` 
+                  label: `${l.name} (${(l as any).cluster?.name || 'No Cluster'})` 
                 }))}
                 defaultLabel="Select location..."
                 className={errors.locationId ? "border-red-500" : ""}

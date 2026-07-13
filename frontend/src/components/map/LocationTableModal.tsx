@@ -15,16 +15,7 @@ export function LocationTableModal() {
   const [deletingDevice, setDeletingDevice] = useState<any | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleEditSuccess = async () => {
-    // Refresh map data to get the updated devices
-    await refreshMapData()
-    // Normally, the updated map data might replace `selectedMarker` or we just rely on the effect in MapContext
-    // Wait, the table displays devices inside `selectedMarker`. If we just call `refreshMapData()`, 
-    // it updates `markers` in context. The `selectedMarker` reference might not update automatically 
-    // unless we re-find it from `markers`.
-    // But since they want quick edit, let's also update the local selectedMarker for immediate feedback
-    // Alternatively, `MapContext`'s `refreshMapData` doesn't automatically update `selectedMarker`.
-  }
+
 
   const handleDeleteConfirm = async () => {
     if (!deletingDevice) return

@@ -34,7 +34,7 @@ export default function SettingsPage() {
   const [isProfileLoading, setIsProfileLoading] = useState(false)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
 
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -77,7 +77,6 @@ export default function SettingsPage() {
     try {
       setIsPasswordLoading(true)
       await api.put('/auth/me/password', {
-        currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       })
       toast.success('Password updated successfully')
