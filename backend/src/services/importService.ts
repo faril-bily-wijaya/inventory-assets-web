@@ -140,6 +140,7 @@ function mapDeviceData(row: ParsedRow, location_id: string) {
 export async function generateImportPreview(
   data: ParsedRow[],
   _mode: 'upsert' | 'replace',
+  importType: string,
   prisma: PrismaClient,
 ): Promise<ImportPreview> {
   const errors: string[] = []
@@ -257,6 +258,7 @@ export async function generateImportPreview(
 export async function executeImport(
   data: ParsedRow[],
   mode: 'upsert' | 'replace',
+  importType: string,
   prisma: PrismaClient,
 ): Promise<ImportResult> {
   const errors: string[] = []
@@ -265,23 +267,25 @@ export async function executeImport(
   let newLocations = 0
 
   // -------------------------------------------------------------------------
-  // Replace mode: wipe existing devices and locations
+  // Replace mode: wipe existing devices
   // -------------------------------------------------------------------------
   if (mode === 'replace') {
-    await prisma.devices.updateMany({ data: { deleted_at: new Date() } })
-    await prisma.locations.deleteMany({})
-
-    // Cascade: delete empty clusters, districts, regionals
-    // (only if they have no remaining children)
-    await prisma.clusters.deleteMany({
-      where: { locations: { none: {} } },
-    })
-    await prisma.districts.deleteMany({
-      where: { clusters: { none: {} } },
-    })
-    await prisma.regionals.deleteMany({
-      where: { districts: { none: {} } },
-    })
+    if (importType === 'genset') {
+      // Only wipe Genset Mobile devices
+      await prisma.devices.updateMany({
+        where: { device_type: { in: ['Genset Mobile', 'Genset Mobil', 'Dummy Load'] } },
+        data: { deleted_at: new Date() },
+      })
+    } else {
+      // Wipe regular devices (exclude Genset Mobiles)
+      await prisma.devices.updateMany({
+        where: { device_type: { notIn: ['Genset Mobile', 'Genset Mobil', 'Dummy Load'] } },
+        data: { deleted_at: new Date() },
+      })
+    }
+    // We intentionally DO NOT delete locations and hierarchy during replace mode
+    // because they are shared between Genset Mobiles and regular devices, 
+    // and deleting them would break foreign key relationships.
   }
 
   // -------------------------------------------------------------------------

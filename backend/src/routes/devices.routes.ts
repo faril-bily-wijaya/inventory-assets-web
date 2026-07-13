@@ -488,7 +488,7 @@ router.post('/import/preview', upload.single('file'), async (req, res) => {
     }
 
     // Generate preview
-    const preview = await generateImportPreview(parseResult.data, mode as 'upsert' | 'replace', prisma)
+    const preview = await generateImportPreview(parseResult.data, mode as 'upsert' | 'replace', req.body.importType || 'default', prisma)
 
     res.json(preview)
   } catch (error) {
@@ -523,7 +523,7 @@ router.post('/import', upload.single('file'), async (req, res) => {
 
     // Execute import with transaction
     const result = await prisma.$transaction(async (tx) => {
-      return await executeImport(parseResult.data, mode as 'upsert' | 'replace', tx as any)
+      return await executeImport(parseResult.data, mode as 'upsert' | 'replace', req.body.importType || 'default', tx as any)
     }, {
       maxWait: 10000,
       timeout: 120000,
