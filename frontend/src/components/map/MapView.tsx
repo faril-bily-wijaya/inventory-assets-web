@@ -16,6 +16,16 @@ function MapViewSync() {
   useEffect(() => {
     map.setView(mapCenter, mapZoom)
   }, [mapCenter, mapZoom, map])
+  
+  // Fix for map cut-off issue when container resizes
+  useEffect(() => {
+    const observer = new ResizeObserver(() => {
+      map.invalidateSize()
+    })
+    observer.observe(map.getContainer())
+    return () => observer.disconnect()
+  }, [map])
+  
   return null
 }
 
@@ -201,7 +211,7 @@ export function MapView() {
             )
           })
         ) : (
-          <MarkerClusterGroup chunkedLoading iconCreateFunction={createClusterIcon}>
+          <MarkerClusterGroup chunkedLoading maxClusterRadius={60} iconCreateFunction={createClusterIcon}>
             {filteredMarkers.map((marker: MapMarker) => <LocationMarker key={marker.id} marker={marker} />)}
           </MarkerClusterGroup>
         )}
