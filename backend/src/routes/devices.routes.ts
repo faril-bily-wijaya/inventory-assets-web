@@ -491,9 +491,10 @@ router.post('/import/preview', upload.single('file'), async (req, res) => {
     const preview = await generateImportPreview(parseResult.data, mode as 'upsert' | 'replace', req.body.importType || 'default', prisma)
 
     res.json(preview)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Import preview error:', error)
-    res.status(500).json({ error: 'Terjadi kesalahan saat memproses file' })
+    const message = error?.message || 'Terjadi kesalahan saat memproses file'
+    res.status(400).json({ error: message })
   }
 })
 
