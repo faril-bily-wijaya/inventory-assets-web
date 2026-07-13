@@ -9,7 +9,7 @@ interface FileDropzoneProps {
   disabled?: boolean
 }
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 const ALLOWED_EXTENSIONS = ['.csv', '.xlsx', '.xls']
 
 export function FileDropzone({ onFileSelect, selectedFile, onClear, disabled }: FileDropzoneProps) {
