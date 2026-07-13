@@ -34,14 +34,7 @@ export function Header({ onMenuClick, showMenuButton = false }: HeaderProps) {
 
       {/* Right side */}
       <div className="flex items-center gap-2">
-        {/* Theme toggle */}
-        <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2" title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}>
-          {resolvedTheme === 'dark' ? (
-            <Sun className="w-5 h-5" />
-          ) : (
-            <Moon className="w-5 h-5" />
-          )}
-        </Button>
+
 
         {/* Notifications */}
         <DropdownMenu>
