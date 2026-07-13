@@ -72,7 +72,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
     } else {
       executeImport()
     }
-  }, [mode])
+  }, [mode, executeImport])
 
   const executeImport = useCallback(async () => {
     if (!selectedFile) return
