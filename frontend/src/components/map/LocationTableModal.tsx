@@ -156,6 +156,7 @@ export function LocationTableModal() {
                 <thead className="bg-slate-100 dark:bg-slate-800 sticky top-0 z-10 shadow-sm border-b border-slate-200 dark:border-slate-700">
                   <tr>
                     <th className="py-4 px-4 md:px-6 font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Kode Perangkat</th>
+                    <th className="py-4 px-4 md:px-6 font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Nama Perangkat</th>
                     <th className="py-4 px-4 md:px-6 font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Tipe</th>
                     <th className="py-4 px-4 md:px-6 font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Merk</th>
                     <th className="py-4 px-4 md:px-6 font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-xs">Kapasitas</th>
@@ -171,6 +172,7 @@ export function LocationTableModal() {
                     return (
                       <tr key={i} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group">
                         <td className="py-3.5 px-4 md:px-6 text-slate-500 dark:text-slate-400 font-mono text-xs">{dev.deviceCode || '-'}</td>
+                        <td className="py-3.5 px-4 md:px-6 text-slate-700 dark:text-slate-300 font-medium text-xs">{dev.deviceName || '-'}</td>
                         <td className="py-3.5 px-4 md:px-6 text-slate-800 dark:text-white font-bold group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{dev.deviceType}</td>
                         <td className="py-3.5 px-4 md:px-6 text-slate-600 dark:text-slate-300 font-medium">
                           {dev.brand || '-'}
