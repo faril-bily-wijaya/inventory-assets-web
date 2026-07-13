@@ -305,7 +305,7 @@ export async function executeImport(
     prisma.regionals.findMany({ select: { id: true, name: true, area_id: true } }),
     prisma.districts.findMany({ select: { id: true, name: true, regional_id: true } }),
     prisma.clusters.findMany({ select: { id: true, name: true, district_id: true } }),
-    prisma.locations.findMany({ select: { id: true, name: true, cluster_id: true } }),
+    prisma.locations.findMany({ select: { id: true, name: true, cluster_id: true, district_id: true, regional_id: true, latitude: true, longitude: true } }),
     prisma.devices.findMany({ select: { id: true, device_code: true } }),
   ])
 
@@ -315,6 +315,45 @@ export async function executeImport(
   const clusterByName = new Map(allClusters.map((c) => [c.name, c.id]))
   const locByName = new Map(allLocs.map((l) => [l.name, l.id]))
   const deviceByCode = new Map(allDevices.map((d) => [d.device_code, d.id]))
+  
+  // Create a mutable copy of all locations to use for fuzzy matching and fallback
+  const availableLocations = [...allLocs]
+
+  // Helper function to find best matching location or fallback coordinates
+  const findLocationHelpers = (locName: string, clusterId: string | undefined, districtId: string | undefined) => {
+    // 1. Fuzzy match
+    const locNameLower = locName.toLowerCase()
+    let bestMatch = availableLocations.find(l => 
+      (l.name.toLowerCase().includes(locNameLower) || locNameLower.includes(l.name.toLowerCase())) &&
+      (l.cluster_id === clusterId || l.district_id === districtId)
+    )
+    if (!bestMatch) {
+      bestMatch = availableLocations.find(l => 
+        l.name.toLowerCase() === locNameLower ||
+        l.name.toLowerCase() === `sto ${locNameLower}` ||
+        `sto ${l.name.toLowerCase()}` === locNameLower
+      )
+    }
+
+    // 2. Fallback coordinates
+    let fallbackLat = 0
+    let fallbackLng = 0
+    if (clusterId) {
+      const locInCluster = availableLocations.find(l => l.cluster_id === clusterId && l.latitude !== 0 && l.longitude !== 0)
+      if (locInCluster) { fallbackLat = locInCluster.latitude; fallbackLng = locInCluster.longitude }
+    }
+    if (fallbackLat === 0 && fallbackLng === 0 && districtId) {
+      const locInDist = availableLocations.find(l => l.district_id === districtId && l.latitude !== 0 && l.longitude !== 0)
+      if (locInDist) { fallbackLat = locInDist.latitude; fallbackLng = locInDist.longitude }
+    }
+    // Default to Sumatra center if still 0
+    if (fallbackLat === 0 && fallbackLng === 0) {
+      fallbackLat = -3.5
+      fallbackLng = 103.5
+    }
+
+    return { matchedLocation: bestMatch, fallbackLat, fallbackLng }
+  }
 
   // -------------------------------------------------------------------------
   // Phase 1 — Upsert hierarchy (top-down) for all unique rows
@@ -363,31 +402,48 @@ export async function executeImport(
     }
 
     // --- Location ---
-    if (locName && !locByName.has(locName)) {
-      // Use provided coordinates or a default placeholder
-      const lat = row.latitude ?? 0
-      const lng = row.longitude ?? 0
-      const created = await prisma.locations.create({
-        data: {
-          name: locName,
-          site_code: normalise(row.site_code) || null,
-          latitude: lat,
-          longitude: lng,
-          cluster_id,
-          area_id,
-          regional_id,
-          district_id,
-          class_type: normalise(row.class_type) || 'BASIC',
-          address: normalise(row.address) || null,
-          territory: normalise(row.territory) || null,
-          teknisi: normalise(row.teknisi) || null,
-          uuid: normalise(row.uuid) || null,
-          organization_uuid: normalise(row.organization_uuid) || null,
-          organization_sname: normalise(row.organization_sname) || null,
-        },
-      })
-      locByName.set(locName, created.id)
-      newLocations++
+    if (locName) {
+      if (locByName.has(locName)) {
+        // Exact match found, do nothing
+      } else {
+        // Try fuzzy matching
+        const { matchedLocation, fallbackLat, fallbackLng } = findLocationHelpers(locName, cluster_id, district_id)
+        
+        if (matchedLocation) {
+          // Fuzzy match found, link to existing location
+          locByName.set(locName, matchedLocation.id)
+        } else {
+          // No match found, create new location with fallback coordinates
+          const lat = row.latitude ?? fallbackLat
+          const lng = row.longitude ?? fallbackLng
+          const created = await prisma.locations.create({
+            data: {
+              name: locName,
+              site_code: normalise(row.site_code) || null,
+              latitude: lat,
+              longitude: lng,
+              cluster_id,
+              area_id,
+              regional_id,
+              district_id,
+              class_type: normalise(row.class_type) || 'BASIC',
+              address: normalise(row.address) || null,
+              territory: normalise(row.territory) || null,
+              teknisi: normalise(row.teknisi) || null,
+              uuid: normalise(row.uuid) || null,
+              organization_uuid: normalise(row.organization_uuid) || null,
+              organization_sname: normalise(row.organization_sname) || null,
+            },
+          })
+          locByName.set(locName, created.id)
+          availableLocations.push({
+            id: created.id, name: created.name, cluster_id: created.cluster_id, 
+            district_id: created.district_id, regional_id: created.regional_id,
+            latitude: created.latitude, longitude: created.longitude
+          })
+          newLocations++
+        }
+      }
     }
   }
 
