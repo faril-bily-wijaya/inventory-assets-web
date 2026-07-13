@@ -66,14 +66,6 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
     }
   }, [selectedFile, mode])
 
-  const handleConfirm = useCallback(() => {
-    if (mode === 'replace') {
-      setShowConfirmModal(true)
-    } else {
-      executeImport()
-    }
-  }, [mode, executeImport])
-
   const executeImport = useCallback(async () => {
     if (!selectedFile) return
 
@@ -101,7 +93,15 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
     } finally {
       setIsImporting(false)
     }
-  }, [selectedFile, mode, preview])
+  }, [selectedFile, mode, preview, internalImportType])
+
+  const handleConfirm = useCallback(() => {
+    if (mode === 'replace') {
+      setShowConfirmModal(true)
+    } else {
+      executeImport()
+    }
+  }, [mode, executeImport])
 
   const handleDownloadTemplate = useCallback(async () => {
     try {
