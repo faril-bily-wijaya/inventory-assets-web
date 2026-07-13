@@ -401,6 +401,10 @@ function parseXlsx(buffer: Buffer, importType: 'default' | 'genset' = 'default')
     }
   }
 
+  if (data.length === 0) {
+    return { data: [], errors: ['File tidak berisi data atau format kolom tidak sesuai'] }
+  }
+
   return { data, errors }
 }
 

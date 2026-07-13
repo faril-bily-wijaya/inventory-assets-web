@@ -55,7 +55,11 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       setPreview(result)
       setStep('preview')
     } catch (error: any) {
-      const message = error.response?.data?.error || error.response?.data?.errors?.[0] || 'Gagal memproses file'
+      let message = 'Gagal memproses file'
+      if (error.response?.data?.error) message = error.response.data.error
+      else if (error.response?.data?.errors?.[0]) message = error.response.data.errors[0]
+      else if (error.message) message = `Error: ${error.message}`
+      
       toast.error(message)
     } finally {
       setIsLoading(false)
@@ -89,7 +93,10 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       setPreview(null)
       toast.success(`Berhasil import ${preview?.totalRows || 0} data`)
     } catch (error: any) {
-      const message = error.response?.data?.error || 'Gagal mengimpor data'
+      let message = 'Gagal mengimpor data'
+      if (error.response?.data?.error) message = error.response.data.error
+      else if (error.message) message = `Error: ${error.message}`
+      
       toast.error(message)
     } finally {
       setIsImporting(false)
