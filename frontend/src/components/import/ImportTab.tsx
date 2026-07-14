@@ -21,7 +21,6 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [mode, setMode] = useState<ImportMode>('upsert')
   const [preview, setPreview] = useState<ImportPreviewType | null>(null)
-  const [internalImportType, setInternalImportType] = useState<'default' | 'genset'>(importType)
   const [isLoading, setIsLoading] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
   const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -49,7 +48,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       const options: UploadOptions = {
         file: selectedFile,
         mode,
-        importType: internalImportType,
+        importType: importType,
       }
       const result = await importService.getPreview(options)
       setPreview(result)
@@ -76,7 +75,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       const options: UploadOptions = {
         file: selectedFile,
         mode,
-        importType: internalImportType,
+        importType: importType,
       }
       await importService.executeImport(options)
       setImportSuccess(true)
@@ -93,7 +92,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
     } finally {
       setIsImporting(false)
     }
-  }, [selectedFile, mode, preview, internalImportType])
+  }, [selectedFile, mode, preview, importType])
 
   const handleConfirm = useCallback(() => {
     if (mode === 'replace') {
@@ -105,12 +104,12 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
 
   const handleDownloadTemplate = useCallback(async () => {
     try {
-      await importService.downloadTemplate(internalImportType)
+      await importService.downloadTemplate(importType)
       toast.success('Template downloaded')
     } catch {
       toast.error('Gagal download template')
     }
-  }, [internalImportType])
+  }, [importType])
 
   const handleBack = useCallback(() => {
     setStep('select')
@@ -149,44 +148,9 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       {/* Import Card */}
       <Card>
         <div className="space-y-6">
-          {/* Format Selection */}
-          <div>
-            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">1. Pilih Format File</h3>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="importType" 
-                  value="default" 
-                  checked={internalImportType === 'default'}
-                  onChange={() => {
-                    setInternalImportType('default')
-                    handleClear()
-                  }}
-                  className="w-4 h-4 text-cyan-500 bg-white border-slate-300 focus:ring-cyan-500 dark:bg-slate-800 dark:border-slate-600"
-                />
-                <span className="text-sm text-[var(--text-secondary)]">Format Standar (Default)</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input 
-                  type="radio" 
-                  name="importType" 
-                  value="genset" 
-                  checked={internalImportType === 'genset'}
-                  onChange={() => {
-                    setInternalImportType('genset')
-                    handleClear()
-                  }}
-                  className="w-4 h-4 text-cyan-500 bg-white border-slate-300 focus:ring-cyan-500 dark:bg-slate-800 dark:border-slate-600"
-                />
-                <span className="text-sm text-[var(--text-secondary)]">Format Genset Mobile</span>
-              </label>
-            </div>
-          </div>
-
           {/* File Selection */}
           <div>
-            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">2. Pilih File</h3>
+            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">1. Pilih File</h3>
             <FileDropzone
               onFileSelect={handleFileSelect}
               selectedFile={selectedFile}
@@ -198,7 +162,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
           {/* Mode Selection */}
           {selectedFile && (
             <div>
-              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">3. Pilih Mode</h3>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">2. Pilih Mode</h3>
               <ModeSelector
                 value={mode}
                 onChange={setMode}
@@ -224,7 +188,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
           {preview && step === 'preview' && (
             <>
               <div className="border-t border-[var(--border)] pt-6">
-                <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">4. Preview Data</h3>
+                <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">3. Preview Data</h3>
                 <ImportPreview
                   preview={preview}
                   onConfirm={handleConfirm}
