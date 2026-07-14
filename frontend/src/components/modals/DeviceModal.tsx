@@ -255,7 +255,7 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
                 onChange={field.onChange}
                 options={locations.map(l => ({ 
                   value: l.id, 
-                  label: `${l.name} (${(l as any).cluster?.name || 'No Cluster'})` 
+                  label: `${l.name} (${(l as any).clusters?.name || 'No Cluster'})` 
                 }))}
                 defaultLabel="Select location..."
                 className={errors.locationId ? "border-red-500" : ""}
