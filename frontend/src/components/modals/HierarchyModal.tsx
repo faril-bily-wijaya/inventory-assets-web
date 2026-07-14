@@ -77,13 +77,13 @@ export function HierarchyModal({ isOpen, onClose, type, initialData, parentOptio
             await locationService.updateArea(initialData.id, data.name)
             break
           case 'regional':
-            await locationService.updateRegional(initialData.id, data.name, data.parentId)
+            await locationService.updateRegional(initialData.id, data.name, data.parentId!)
             break
           case 'district':
-            await locationService.updateDistrict(initialData.id, data.name, data.parentId)
+            await locationService.updateDistrict(initialData.id, data.name, data.parentId!)
             break
           case 'cluster':
-            await locationService.updateCluster(initialData.id, data.name, data.parentId)
+            await locationService.updateCluster(initialData.id, data.name, data.parentId!)
             break
         }
         toast.success(`${getTitle(type, true)} berhasil disimpan`)
@@ -93,13 +93,13 @@ export function HierarchyModal({ isOpen, onClose, type, initialData, parentOptio
             await locationService.createArea(data.name)
             break
           case 'regional':
-            await locationService.createRegional(data.name, data.parentId)
+            await locationService.createRegional(data.name, data.parentId!)
             break
           case 'district':
-            await locationService.createDistrict(data.name, data.parentId)
+            await locationService.createDistrict(data.name, data.parentId!)
             break
           case 'cluster':
-            await locationService.createCluster(data.name, data.parentId)
+            await locationService.createCluster(data.name, data.parentId!)
             break
         }
         toast.success(`${getTitle(type, false)} berhasil ditambahkan`)
