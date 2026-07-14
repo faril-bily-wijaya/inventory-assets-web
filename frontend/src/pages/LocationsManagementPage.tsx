@@ -4,6 +4,7 @@ import { locationService } from '../services/locationService'
 import { HierarchyModal } from '../components/modals/HierarchyModal'
 import type { HierarchyType } from '../components/modals/HierarchyModal'
 import { ConfirmModal } from '../components/modals/ConfirmModal'
+import { LocationFormModal } from '../components/modals/LocationFormModal'
 import { PageContainer } from '../components/layout/PageContainer'
 import { SidebarNav } from '../components/layout/SidebarNav'
 import toast from 'react-hot-toast'
@@ -26,6 +27,8 @@ export function LocationsManagementPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingItem, setDeletingItem] = useState<any | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false)
 
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -53,7 +56,8 @@ export function LocationsManagementPage() {
 
   const handleAdd = () => {
     if (activeTab === 'location') {
-      toast.error('Fitur tambah lokasi STO/Site secara manual melalui form akan segera hadir. Gunakan import Excel sementara waktu.')
+      setEditingItem(null)
+      setIsLocationModalOpen(true)
       return
     }
     setEditingItem(null)
@@ -62,7 +66,8 @@ export function LocationsManagementPage() {
 
   const handleEdit = (item: any) => {
     if (activeTab === 'location') {
-      toast.error('Fitur edit lokasi STO/Site akan segera hadir.')
+      setEditingItem(item)
+      setIsLocationModalOpen(true)
       return
     }
     setEditingItem(item)
@@ -71,7 +76,13 @@ export function LocationsManagementPage() {
 
   const handleDeleteClick = (item: any) => {
     if (activeTab === 'location') {
-      toast.error('Fitur hapus lokasi STO/Site akan segera hadir.')
+      const deviceCount = item._count?.devices || item.devices?.length || 0
+      if (deviceCount > 0) {
+        toast.error(`Tidak dapat menghapus ${item.name} karena masih memiliki ${deviceCount} perangkat.`)
+        return
+      }
+      setDeletingItem(item)
+      setIsDeleteModalOpen(true)
       return
     }
     // Check for children
@@ -106,6 +117,9 @@ export function LocationsManagementPage() {
           break
         case 'cluster':
           await locationService.deleteCluster(deletingItem.id)
+          break
+        case 'location':
+          await locationService.deleteLocation(deletingItem.id)
           break
       }
       toast.success(`${deletingItem.name} berhasil dihapus`)
@@ -302,6 +316,16 @@ export function LocationsManagementPage() {
         type={activeTab as HierarchyType}
         initialData={editingItem}
         parentOptions={getParentOptions()}
+        onSuccess={fetchData}
+      />
+
+      <LocationFormModal
+        isOpen={isLocationModalOpen}
+        onClose={() => {
+          setIsLocationModalOpen(false)
+          setEditingItem(null)
+        }}
+        location={editingItem as Location}
         onSuccess={fetchData}
       />
 
