@@ -344,7 +344,7 @@ function parseXlsx(buffer: Buffer, importType: 'default' | 'genset' = 'default')
       
       const perangkat = sanitizeString(get('perangkat'))
       const sto = sanitizeString(get('sto'))
-      const distrik = sanitizeString(get('distrik'))
+      const distrik = sanitizeString(get('district') || get('distrik'))
       const myassetId = sanitizeString(get('myasset id'))
       
       if (!perangkat && !sto) continue

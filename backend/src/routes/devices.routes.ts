@@ -553,7 +553,7 @@ router.get('/import/template', async (req, res) => {
       templateData = [{
         'NO': 1,
         'Perangkat': 'Genset Mobil',
-        'Distrik': 'Bengkulu',
+        'District': 'Bengkulu',
         'STO': 'Bengkulu Centrum',
         'Area': 'AREA SUMBAGSEL',
         'Regional': 'REGIONAL SUMBAGSEL',
