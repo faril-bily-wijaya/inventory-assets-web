@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MapPin, Download, X, Pencil, Trash2 } from 'lucide-react'
+import { MapPin, Download, X, Pencil, Trash2, Plus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import * as XLSX from 'xlsx'
 import { useMapContext } from '../../contexts/MapContext'
@@ -14,6 +14,7 @@ export function LocationTableModal() {
   const [editingDevice, setEditingDevice] = useState<any | null>(null)
   const [deletingDevice, setDeletingDevice] = useState<any | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isAddingDevice, setIsAddingDevice] = useState(false)
 
 
 
@@ -138,6 +139,12 @@ export function LocationTableModal() {
               </div>
               <div className="flex items-center gap-2 md:gap-4">
                 <button 
+                  onClick={() => setIsAddingDevice(true)}
+                  className="hidden md:flex p-2.5 bg-cyan-600 text-white rounded-xl hover:bg-cyan-700 transition-colors shadow-sm items-center gap-2 font-bold text-sm"
+                >
+                  <Plus className="w-4 h-4" /> Tambah
+                </button>
+                <button 
                   onClick={downloadCSV}
                   className="hidden md:flex p-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-sm items-center gap-2 font-bold text-sm"
                 >
@@ -239,19 +246,17 @@ export function LocationTableModal() {
               onClose={() => setEditingDevice(null)}
               device={editingDevice}
               onSuccess={() => {
-                refreshMapData().then(() => {
-                  // We manually update local state to avoid needing to re-open the modal
-                  // A better approach in a real app is refetching the specific location
-                  if (selectedMarker) {
-                     // Since we updated via the backend, we should technically pull the updated list.
-                     // A simple page reload or map refresh handles it, but selectedMarker doesn't auto-update.
-                     // We'll close the modal for now to force a refresh if the user re-clicks the marker.
-                     // Or just leave it and let them close it themselves.
-                  }
-                })
+                refreshMapData()
               }}
             />
-
+            <DeviceModal
+              isOpen={isAddingDevice}
+              onClose={() => setIsAddingDevice(false)}
+              defaultLocationId={selectedMarker?.id}
+              onSuccess={() => {
+                refreshMapData()
+              }}
+            />
             <ConfirmModal
               isOpen={!!deletingDevice}
               onClose={() => setDeletingDevice(null)}

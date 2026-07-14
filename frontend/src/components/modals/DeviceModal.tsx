@@ -50,10 +50,11 @@ interface Props {
   isOpen: boolean
   onClose: () => void
   device?: Device
+  defaultLocationId?: string
   onSuccess?: () => void
 }
 
-export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
+export function DeviceModal({ isOpen, onClose, device, defaultLocationId, onSuccess }: Props) {
   const { locations } = useMapContext()
   const isEditing = !!device
 
@@ -84,7 +85,7 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
       organizationName: device.organizationName || '',
       organizationUuid: device.organizationUuid || '',
       organizationSname: device.organizationSname || '',
-    } : { status: 'OPERATIONAL' },
+    } : { status: 'OPERATIONAL', locationId: defaultLocationId || '' },
   })
 
   useEffect(() => {
@@ -116,9 +117,9 @@ export function DeviceModal({ isOpen, onClose, device, onSuccess }: Props) {
         organizationSname: device.organizationSname || '',
       })
     } else {
-      reset({ status: 'OPERATIONAL' })
+      reset({ status: 'OPERATIONAL', locationId: defaultLocationId || '' })
     }
-  }, [device, reset])
+  }, [device, defaultLocationId, reset])
 
   const onSubmit = async (data: DeviceFormValues) => {
     try {
