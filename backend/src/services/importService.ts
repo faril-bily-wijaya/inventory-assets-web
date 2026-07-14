@@ -314,12 +314,12 @@ export async function executeImport(
     prisma.devices.findMany({ select: { id: true, device_code: true } }),
   ])
 
-  const areaByName = new Map(allAreas.map((a) => [a.name, a.id]))
-  const regByName = new Map(allRegs.map((r) => [r.name, r.id]))
-  const distByName = new Map(allDists.map((d) => [d.name, d.id]))
-  const clusterByName = new Map(allClusters.map((c) => [c.name, c.id]))
-  const locByName = new Map(allLocs.map((l) => [l.name, l.id]))
-  const deviceByCode = new Map(allDevices.map((d) => [d.device_code, d.id]))
+  const areaByName = new Map(allAreas.map((a) => [a.name.toLowerCase(), a.id]))
+  const regByName = new Map(allRegs.map((r) => [r.name.toLowerCase(), r.id]))
+  const distByName = new Map(allDists.map((d) => [d.name.toLowerCase(), d.id]))
+  const clusterByName = new Map(allClusters.map((c) => [c.name.toLowerCase(), c.id]))
+  const locByName = new Map(allLocs.map((l) => [l.name.toLowerCase(), l.id]))
+  const deviceByCode = new Map(allDevices.map((d) => [d.device_code?.toLowerCase(), d.id]))
   
   // Create a mutable copy of all locations to use for fuzzy matching and fallback
   const availableLocations = [...allLocs]
@@ -371,44 +371,49 @@ export async function executeImport(
     const locName = normalise(row.site_name)
 
     // --- Area ---
-    let area_id = areaByName.get(areaName)
+    const areaKey = areaName.toLowerCase()
+    let area_id = areaByName.get(areaKey)
     if (!area_id) {
       const created = await prisma.areas.create({ data: { name: areaName } })
       area_id = created.id
-      areaByName.set(areaName, area_id)
+      areaByName.set(areaKey, area_id)
     }
 
     // --- Regional ---
-    let regional_id = regByName.get(regName)
+    const regKey = regName.toLowerCase()
+    let regional_id = regByName.get(regKey)
     if (!regional_id) {
       const created = await prisma.regionals.create({ data: { name: regName, area_id } })
       regional_id = created.id
-      regByName.set(regName, regional_id)
+      regByName.set(regKey, regional_id)
     }
 
     // --- District ---
-    let district_id = distByName.get(distName)
+    const distKey = distName.toLowerCase()
+    let district_id = distByName.get(distKey)
     if (!district_id) {
       const created = await prisma.districts.create({
         data: { name: distName, regional_id },
       })
       district_id = created.id
-      distByName.set(distName, district_id)
+      distByName.set(distKey, district_id)
     }
 
     // --- Cluster ---
-    let cluster_id = clusterByName.get(clusterName)
+    const clusterKey = clusterName.toLowerCase()
+    let cluster_id = clusterByName.get(clusterKey)
     if (!cluster_id) {
       const created = await prisma.clusters.create({
         data: { name: clusterName, district_id },
       })
       cluster_id = created.id
-      clusterByName.set(clusterName, cluster_id)
+      clusterByName.set(clusterKey, cluster_id)
     }
 
     // --- Location ---
     if (locName) {
-      if (locByName.has(locName)) {
+      const locKey = locName.toLowerCase()
+      if (locByName.has(locKey)) {
         // Exact match found, do nothing
       } else {
         // Try fuzzy matching
@@ -416,7 +421,7 @@ export async function executeImport(
         
         if (matchedLocation) {
           // Fuzzy match found, link to existing location
-          locByName.set(locName, matchedLocation.id)
+          locByName.set(locKey, matchedLocation.id)
         } else {
           // No match found, create new location with fallback coordinates
           const lat = row.latitude ?? fallbackLat
@@ -470,7 +475,8 @@ export async function executeImport(
           return
         }
 
-        const location_id = locByName.get(locName)
+        const locKey = locName ? locName.toLowerCase() : ''
+        const location_id = locKey ? locByName.get(locKey) : undefined
         if (!location_id) {
           errors.push(`Baris "${row.device_name}": location tidak ditemukan`)
           return
@@ -478,7 +484,7 @@ export async function executeImport(
 
         const deviceData = mapDeviceData(row, location_id)
 
-        if (deviceByCode.has(device_code)) {
+        if (deviceByCode.has(device_code.toLowerCase())) {
           // Update existing
           try {
             await prisma.devices.update({
@@ -492,7 +498,7 @@ export async function executeImport(
         } else {
           // Collect new for bulk insert
           newDevicesData.push(deviceData)
-          deviceByCode.set(device_code, device_code) // mark as existing for this session
+          deviceByCode.set(device_code.toLowerCase(), device_code) // mark as existing for this session
         }
       })
     )
