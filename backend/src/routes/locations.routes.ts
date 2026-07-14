@@ -254,8 +254,9 @@ router.post('/', async (req, res) => {
         uuid: data.uuid,
         organization_uuid: data.organizationUuid,
         organization_sname: data.organizationSname,
-      } 
+      }
     })
+    invalidateLocationsCache()
     res.status(201).json({ location })
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -289,6 +290,7 @@ router.put('/:id', async (req, res) => {
       where: { id: req.params.id },
       data: updateData,
     })
+    invalidateLocationsCache()
     res.json({ location })
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -301,9 +303,11 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/locations/:id
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.locations.delete({
+    await prisma.locations.update({
       where: { id: req.params.id },
+      data: { deleted_at: new Date() }, // Soft delete
     })
+    invalidateLocationsCache()
     res.json({ success: true })
   } catch (error) {
     console.error('Error deleting location:', error)
