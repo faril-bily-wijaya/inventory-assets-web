@@ -121,6 +121,7 @@ function mapDeviceData(row: ParsedRow, location_id: string) {
     organization_uuid: normalise(row.organization_uuid) || null,
     organization_sname: normalise(row.organization_sname) || null,
     location_id,
+    deleted_at: null,
   }
 }
 
