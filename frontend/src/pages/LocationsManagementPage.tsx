@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Pencil, Trash2, MapPin, Search, CheckSquare, Square, ArrowRight } from 'lucide-react'
+import { Plus, Pencil, Trash2, MapPin, Search, CheckSquare, ArrowRight } from 'lucide-react'
 import { locationService } from '../services/locationService'
 import { HierarchyModal } from '../components/modals/HierarchyModal'
 import type { HierarchyType } from '../components/modals/HierarchyModal'
@@ -419,6 +419,15 @@ export function LocationsManagementPage() {
           )}
         </div>
       </div>
+
+      <BulkMoveModal
+        isOpen={isBulkMoveOpen}
+        onClose={() => setIsBulkMoveOpen(false)}
+        onConfirm={handleBulkMoveConfirm}
+        itemsCount={selectedIds.length}
+        parentOptions={getParentOptions()}
+        parentLabel={activeTab === 'regional' ? 'Area' : activeTab === 'district' ? 'Regional' : 'District'}
+      />
 
       <HierarchyModal
         isOpen={isModalOpen && activeTab !== 'location'}
