@@ -52,15 +52,19 @@ export const importService = {
     }
   },
 
-  async downloadTemplate(): Promise<void> {
-    const response = await api.get('/devices/import/template', {
+  async downloadTemplate(importType?: 'default' | 'genset'): Promise<void> {
+    const urlPath = importType === 'genset' 
+      ? '/devices/import/template?type=genset' 
+      : '/devices/import/template'
+      
+    const response = await api.get(urlPath, {
       responseType: 'blob',
     })
 
     const url = window.URL.createObjectURL(new Blob([response.data]))
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', 'device_import_template.xlsx')
+    link.setAttribute('download', importType === 'genset' ? 'genset_import_template.xlsx' : 'device_import_template.xlsx')
     document.body.appendChild(link)
     link.click()
     link.remove()

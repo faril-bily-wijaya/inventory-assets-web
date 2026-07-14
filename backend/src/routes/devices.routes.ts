@@ -546,50 +546,71 @@ router.get('/import/template', async (req, res) => {
   try {
     const XLSX = await import('xlsx')
 
-    // Create template data
-    const templateData = [{
-      area: 'AREA SUMBAGSEL',
-      regional: 'REGIONAL SUMBAGSEL',
-      district: 'PALEMBANG',
-      cluster: 'CLUSTER PALEMBANG',
-      site_name: 'Nama Site',
-      site_code: 'PGC',
-      address: 'Alamat Site',
-      latitude: -3.5667,
-      longitude: 102.9833,
-      class_type: 'BASIC',
-      teknisi: 'Nama Teknisi',
-      device_code: 'DEVICE001',
-      device_name: 'Nama Device',
-      device_type: 'GENSET',
-      brand: 'CAT',
-      model: 'Model XYZ',
-      serial_number: 'SN12345',
-      label_code: 'LBL001',
-      kapasitas: '100',
-      satuan_kapasitas: 'KVA',
-      jenis_tegangan: '380V',
-      beban_arus: '50',
-      satuan_beban: 'A',
-      cap_real: '90',
-      year: 2020,
-      usia_perangkat: 6,
-      status: 'OPERATIONAL',
-      condition: 'NORMAL',
-      ruangan_code: 'R01',
-      ruangan_name: 'Ruang Genset',
-      ruangan_panjang: 5,
-      ruangan_lebar: 4,
-      ruangan_tinggi: 3,
-      ruangan_luas: 20,
-      rack_code: 'RCK01',
-      rack_name: 'Rak Utama',
-      rack_panjang: 1,
-      rack_lebar: 1,
-      rack_tinggi: 2,
-      rack_luas: 1,
-      keterangan: 'Keterangan tambahan'
-    }]
+    const type = req.query.type as string
+    let templateData: any[]
+
+    if (type === 'genset') {
+      templateData = [{
+        'NO': 1,
+        'Perangkat': 'Genset Mobil',
+        'Distrik': 'Bengkulu',
+        'STO': 'Bengkulu Centrum',
+        'Area': 'AREA SUMBAGSEL',
+        'Regional': 'REGIONAL SUMBAGSEL',
+        'Cluster': 'CLUSTER BENGKULU',
+        'Latitude': -3.8000,
+        'Longitude': 102.2500,
+        'MERK': 'Caterpillar',
+        'Kapasitas (KVA) / A': '15 kVa',
+        'Kondisi': 'Bagus',
+        'MYASSET ID': 'GM-XYZ123',
+        'KETERANGAN': 'Siap digunakan'
+      }]
+    } else {
+      templateData = [{
+        area: 'AREA SUMBAGSEL',
+        regional: 'REGIONAL SUMBAGSEL',
+        district: 'PALEMBANG',
+        cluster: 'CLUSTER PALEMBANG',
+        site_name: 'Nama Site',
+        site_code: 'PGC',
+        address: 'Alamat Site',
+        latitude: -3.5667,
+        longitude: 102.9833,
+        class_type: 'BASIC',
+        teknisi: 'Nama Teknisi',
+        device_code: 'DEVICE001',
+        device_name: 'Nama Device',
+        device_type: 'GENSET',
+        brand: 'CAT',
+        model: 'Model XYZ',
+        serial_number: 'SN12345',
+        label_code: 'LBL001',
+        kapasitas: '100',
+        satuan_kapasitas: 'KVA',
+        jenis_tegangan: '380V',
+        beban_arus: '50',
+        satuan_beban: 'A',
+        cap_real: '90',
+        year: 2020,
+        usia_perangkat: 6,
+        status: 'OPERATIONAL',
+        condition: 'NORMAL',
+        ruangan_code: 'R01',
+        ruangan_name: 'Ruang Genset',
+        ruangan_panjang: 5,
+        ruangan_lebar: 4,
+        ruangan_tinggi: 3,
+        ruangan_luas: 20,
+        rack_code: 'RCK01',
+        rack_name: 'Rak Utama',
+        rack_panjang: 1,
+        rack_lebar: 1,
+        rack_tinggi: 2,
+        rack_luas: 1,
+        keterangan: 'Keterangan tambahan'
+      }]
+    }
 
     const ws = XLSX.utils.json_to_sheet(templateData)
     const wb = XLSX.utils.book_new()

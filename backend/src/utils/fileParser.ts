@@ -366,8 +366,13 @@ function parseXlsx(buffer: Buffer, importType: 'default' | 'genset' = 'default')
       data.push({
         device_code: myassetId || `GM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`, // fallback code if missing
         device_name: `${device_type} ${sto || ''}`.trim(),
-        site_name: sto || 'Unknown Site',
+        site_name: sto || 'Unknown Site', // This acts as STO
         district: distrik,
+        area: sanitizeString(get('area')),
+        regional: sanitizeString(get('regional')),
+        cluster: sanitizeString(get('cluster')),
+        latitude: parseOptionalNumber(get('latitude')),
+        longitude: parseOptionalNumber(get('longitude')),
         device_type: device_type,
         year: new Date().getFullYear(),
         brand: sanitizeString(get('merk')),

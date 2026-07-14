@@ -105,12 +105,12 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
 
   const handleDownloadTemplate = useCallback(async () => {
     try {
-      await importService.downloadTemplate()
+      await importService.downloadTemplate(internalImportType)
       toast.success('Template downloaded')
     } catch {
       toast.error('Gagal download template')
     }
-  }, [])
+  }, [internalImportType])
 
   const handleBack = useCallback(() => {
     setStep('select')
