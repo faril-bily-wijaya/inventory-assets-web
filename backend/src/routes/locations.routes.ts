@@ -303,9 +303,8 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/locations/:id
 router.delete('/:id', async (req, res) => {
   try {
-    await prisma.locations.update({
+    await prisma.locations.delete({
       where: { id: req.params.id },
-      data: { deleted_at: new Date() }, // Soft delete
     })
     invalidateLocationsCache()
     res.json({ success: true })
