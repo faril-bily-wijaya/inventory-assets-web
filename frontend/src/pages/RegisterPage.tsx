@@ -142,7 +142,7 @@ export default function RegisterPage() {
           </div>
         </Card>
 
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6">© 2024 TIF Indonesia. All rights reserved.</p>
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6">© {new Date().getFullYear()} TIF Indonesia. All rights reserved.</p>
       </div>
     </div>
   )

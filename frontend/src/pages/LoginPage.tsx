@@ -113,12 +113,9 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-[var(--border)] text-center">
-            <p className="text-xs text-[var(--text-muted)]">Demo credentials: admin / admin123</p>
-          </div>
         </Card>
 
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6">© 2024 TIF Indonesia. All rights reserved.</p>
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6">© {new Date().getFullYear()} TIF Indonesia. All rights reserved.</p>
       </div>
     </div>
   )
