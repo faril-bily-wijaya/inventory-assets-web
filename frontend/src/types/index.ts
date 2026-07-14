@@ -62,9 +62,7 @@ export interface Location {
   areaId?: string
   regionalId?: string
   districtId?: string
-  classType?: string
   address?: string
-  territory?: string
   teknisi?: string
   uuid?: string
   organizationUuid?: string

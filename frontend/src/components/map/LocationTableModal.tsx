@@ -55,7 +55,6 @@ export function LocationTableModal() {
       "address": selectedMarker.address || '',
       "latitude": selectedMarker.latitude || '',
       "longitude": selectedMarker.longitude || '',
-      "class_type": selectedMarker.classType || (selectedMarker as any).class_type || '',
       "teknisi": selectedMarker.teknisi || '',
       "device_code": d.deviceCode || '',
       "device_name": d.deviceName || '',

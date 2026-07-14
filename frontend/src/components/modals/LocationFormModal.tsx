@@ -15,13 +15,6 @@ interface Props {
   onSuccess: () => void
 }
 
-const classTypeOptions = [
-  { value: '', label: '-- Pilih Class Type --' },
-  { value: 'BASIC', label: 'BASIC' },
-  { value: 'MEDIUM', label: 'MEDIUM' },
-  { value: 'PREMIUM', label: 'PREMIUM' },
-]
-
 const locationSchema = z.object({
   name: z.string().min(1, 'Nama Lokasi wajib diisi'),
   siteCode: z.string().optional(),
@@ -32,9 +25,7 @@ const locationSchema = z.object({
     message: 'Longitude harus berupa angka'
   }),
   clusterId: z.string().min(1, 'Cluster ID wajib diisi'),
-  classType: z.string().optional(),
   address: z.string().optional(),
-  territory: z.string().optional(),
   teknisi: z.string().optional(),
 })
 
@@ -56,9 +47,7 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
       latitude: '',
       longitude: '',
       clusterId: '',
-      classType: '',
       address: '',
-      territory: '',
       teknisi: '',
     }
   })
@@ -71,9 +60,7 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
         latitude: location.latitude?.toString() || '',
         longitude: location.longitude?.toString() || '',
         clusterId: location.clusterId || '',
-        classType: location.classType || '',
         address: location.address || '',
-        territory: location.territory || '',
         teknisi: location.teknisi || '',
       })
     } else {
@@ -83,9 +70,7 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
         latitude: '',
         longitude: '',
         clusterId: '',
-        classType: '',
         address: '',
-        territory: '',
         teknisi: '',
       })
     }
@@ -99,9 +84,7 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
         latitude: parseFloat(data.latitude),
         longitude: parseFloat(data.longitude),
         clusterId: data.clusterId || undefined,
-        classType: data.classType || undefined,
         address: data.address || undefined,
-        territory: data.territory || undefined,
         teknisi: data.teknisi || undefined,
       }
 
@@ -223,44 +206,22 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
                 </div>
               </div>
 
-              {/* Cluster ID & Class Type Row */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Cluster ID <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    {...register('clusterId')}
-                    placeholder="Contoh: cl-001"
-                    className={`w-full px-4 py-3 rounded-xl border ${errors.clusterId ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
-                  />
-                  {errors.clusterId && (
-                    <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
-                      {errors.clusterId.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Class Type
-                  </label>
-                  <select
-                    {...register('classType')}
-                    className={`w-full px-4 py-3 rounded-xl border ${errors.classType ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
-                  >
-                    {classTypeOptions.map(opt => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.classType && (
-                    <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
-                      {errors.classType.message}
-                    </p>
-                  )}
-                </div>
+              {/* Cluster ID Row */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Cluster ID <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('clusterId')}
+                  placeholder="Contoh: cl-001"
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.clusterId ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
+                />
+                {errors.clusterId && (
+                  <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
+                    {errors.clusterId.message}
+                  </p>
+                )}
               </div>
 
               {/* Alamat */}
@@ -281,40 +242,22 @@ export function LocationFormModal({ isOpen, onClose, location, onSuccess }: Prop
                 )}
               </div>
 
-              {/* Territori & Teknisi Row */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Territori
-                  </label>
-                  <input
-                    type="text"
-                    {...register('territory')}
-                    placeholder="Contoh: Sumatera Selatan"
-                    className={`w-full px-4 py-3 rounded-xl border ${errors.territory ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
-                  />
-                  {errors.territory && (
-                    <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
-                      {errors.territory.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Teknisi
-                  </label>
-                  <input
-                    type="text"
-                    {...register('teknisi')}
-                    placeholder="Contoh: Budi Santoso"
-                    className={`w-full px-4 py-3 rounded-xl border ${errors.teknisi ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
-                  />
-                  {errors.teknisi && (
-                    <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
-                      {errors.teknisi.message}
-                    </p>
-                  )}
-                </div>
+              {/* Teknisi Row */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Teknisi
+                </label>
+                <input
+                  type="text"
+                  {...register('teknisi')}
+                  placeholder="Contoh: Budi Santoso"
+                  className={`w-full px-4 py-3 rounded-xl border ${errors.teknisi ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'} bg-white dark:bg-slate-800 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all`}
+                />
+                {errors.teknisi && (
+                  <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
+                    {errors.teknisi.message}
+                  </p>
+                )}
               </div>
 
               {/* Action Buttons */}

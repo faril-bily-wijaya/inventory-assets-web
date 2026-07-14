@@ -72,9 +72,7 @@ export function DevicePopup({ marker }: Props) {
             <span>{devicesNeedingModernization.length} perangkat butuh modernisasi</span>
           </div>
         )}
-        {marker.classType && (
-          <div className="text-slate-500">Class: {marker.classType}</div>
-        )}
+
         {marker.siteCode && (
           <div className="text-slate-500">Site Code: <span className="font-mono text-cyan-400">{marker.siteCode}</span></div>
         )}

@@ -188,7 +188,6 @@ export function DashboardSidebar() {
           "address": m.address || '',
           "latitude": m.latitude || '',
           "longitude": m.longitude || '',
-          "class_type": m.classType || '',
           "teknisi": m.teknisi || '',
           "device_code": d.deviceCode || '',
           "device_name": d.deviceName || '',

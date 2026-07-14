@@ -13,9 +13,7 @@ const locationSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   clusterId: z.string().optional(),
-  classType: z.string().optional(),
   address: z.string().optional(),
-  territory: z.string().optional(),
   teknisi: z.string().optional(),
   uuid: z.string().optional(),
   organizationUuid: z.string().optional(),
@@ -247,9 +245,7 @@ router.post('/', async (req, res) => {
         latitude: data.latitude,
         longitude: data.longitude,
         cluster_id: data.clusterId,
-        class_type: data.classType,
         address: data.address,
-        territory: data.territory,
         teknisi: data.teknisi,
         uuid: data.uuid,
         organization_uuid: data.organizationUuid,
@@ -278,9 +274,7 @@ router.put('/:id', async (req, res) => {
     if (data.latitude !== undefined) updateData.latitude = data.latitude
     if (data.longitude !== undefined) updateData.longitude = data.longitude
     if (data.clusterId !== undefined) updateData.cluster_id = data.clusterId
-    if (data.classType !== undefined) updateData.class_type = data.classType
     if (data.address !== undefined) updateData.address = data.address
-    if (data.territory !== undefined) updateData.territory = data.territory
     if (data.teknisi !== undefined) updateData.teknisi = data.teknisi
     if (data.uuid !== undefined) updateData.uuid = data.uuid
     if (data.organizationUuid !== undefined) updateData.organization_uuid = data.organizationUuid
