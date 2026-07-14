@@ -315,9 +315,9 @@ export async function executeImport(
   ])
 
   const areaByName = new Map(allAreas.map((a) => [a.name.toLowerCase(), a.id]))
-  const regByName = new Map(allRegs.map((r) => [r.name.toLowerCase(), r.id]))
-  const distByName = new Map(allDists.map((d) => [d.name.toLowerCase(), d.id]))
-  const clusterByName = new Map(allClusters.map((c) => [c.name.toLowerCase(), c.id]))
+  const regByName = new Map(allRegs.map((r) => [`${r.area_id}-${r.name.toLowerCase()}`, r.id]))
+  const distByName = new Map(allDists.map((d) => [`${d.regional_id}-${d.name.toLowerCase()}`, d.id]))
+  const clusterByName = new Map(allClusters.map((c) => [`${c.district_id}-${c.name.toLowerCase()}`, c.id]))
   const locByName = new Map(allLocs.map((l) => [l.name.toLowerCase(), l.id]))
   const deviceByCode = new Map(allDevices.map((d) => [d.device_code?.toLowerCase(), d.id]))
   
@@ -380,7 +380,7 @@ export async function executeImport(
     }
 
     // --- Regional ---
-    const regKey = regName.toLowerCase()
+    const regKey = `${area_id}-${regName.toLowerCase()}`
     let regional_id = regByName.get(regKey)
     if (!regional_id) {
       const created = await prisma.regionals.create({ data: { name: regName, area_id } })
@@ -389,7 +389,7 @@ export async function executeImport(
     }
 
     // --- District ---
-    const distKey = distName.toLowerCase()
+    const distKey = `${regional_id}-${distName.toLowerCase()}`
     let district_id = distByName.get(distKey)
     if (!district_id) {
       const created = await prisma.districts.create({
@@ -400,7 +400,7 @@ export async function executeImport(
     }
 
     // --- Cluster ---
-    const clusterKey = clusterName.toLowerCase()
+    const clusterKey = `${district_id}-${clusterName.toLowerCase()}`
     let cluster_id = clusterByName.get(clusterKey)
     if (!cluster_id) {
       const created = await prisma.clusters.create({
