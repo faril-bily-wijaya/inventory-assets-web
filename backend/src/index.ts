@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import pg from 'pg'
+import { rateLimit } from 'express-rate-limit'
 import { authRoutes, usersRoutes, devicesRoutes, locationsRoutes, hierarchyRoutes } from './routes/index.js'
 import { errorHandler } from './middleware/error-handler.js'
 
@@ -21,8 +22,18 @@ const prisma = new PrismaClient({ adapter })
 
 const PORT = process.env.PORT || 8080
 
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // Limit each IP to 200 requests per windowMs
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
 // Middleware
 app.use(helmet())
+app.use(limiter)
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,

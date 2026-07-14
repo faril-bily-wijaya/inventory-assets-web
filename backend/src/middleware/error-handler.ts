@@ -5,8 +5,13 @@ export function errorHandler(err: Error, req: Request, res: Response, next: Next
   console.error('Error Handler:', {
     name: err.name,
     message: err.message,
-    stack: err.stack
+    // stack: err.stack // Only log stack trace internally, do not expose
   })
+
+  // Prevent sending raw database errors to client
+  if (err.message.includes('Prisma') || err.message.includes('database')) {
+    return res.status(500).json({ error: 'Database connection or query error' })
+  }
 
   if (err instanceof ZodError) {
     return res.status(400).json({
