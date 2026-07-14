@@ -10,6 +10,7 @@ import DevicesPage from './pages/DevicesPage'
 import GensetMobilePage from './pages/GensetMobilePage'
 import UsersManagementPage from './pages/UsersManagementPage'
 import SettingsPage from './pages/SettingsPage'
+import { LocationsManagementPage } from './pages/LocationsManagementPage'
 import ProtectedRoute from './components/layout/ProtectedRoute'
 
 function ProtectedLayout() {
@@ -19,6 +20,7 @@ function ProtectedLayout() {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/devices" element={<DevicesPage />} />
         <Route path="/genset-mobile" element={<GensetMobilePage />} />
+        <Route path="/locations" element={<LocationsManagementPage />} />
         <Route path="/users" element={<UsersManagementPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />

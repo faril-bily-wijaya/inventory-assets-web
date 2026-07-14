@@ -68,4 +68,44 @@ export const locationService = {
     const response = await api.post('/hierarchy/clusters', { name, districtId })
     return response.data
   },
+
+  async updateArea(id: string, name: string) {
+    const response = await api.put(`/hierarchy/areas/${id}`, { name })
+    return response.data
+  },
+
+  async deleteArea(id: string) {
+    const response = await api.delete(`/hierarchy/areas/${id}`)
+    return response.data
+  },
+
+  async updateRegional(id: string, name: string, areaId?: string) {
+    const response = await api.put(`/hierarchy/regionals/${id}`, { name, areaId })
+    return response.data
+  },
+
+  async deleteRegional(id: string) {
+    const response = await api.delete(`/hierarchy/regionals/${id}`)
+    return response.data
+  },
+
+  async updateDistrict(id: string, name: string, regionalId: string) {
+    const response = await api.put(`/hierarchy/districts/${id}`, { name, regionalId })
+    return response.data
+  },
+
+  async deleteDistrict(id: string) {
+    const response = await api.delete(`/hierarchy/districts/${id}`)
+    return response.data
+  },
+
+  async updateCluster(id: string, name: string, districtId: string) {
+    const response = await api.put(`/hierarchy/clusters/${id}`, { name, districtId })
+    return response.data
+  },
+
+  async deleteCluster(id: string) {
+    const response = await api.delete(`/hierarchy/clusters/${id}`)
+    return response.data
+  },
 }

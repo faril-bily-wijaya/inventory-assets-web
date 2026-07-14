@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Server, Settings, Zap, Users } from 'lucide-react'
+import { LayoutDashboard, Server, Settings, Zap, Users, MapPin } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { cn } from '../../utils/cn'
 
@@ -10,6 +10,7 @@ export function SidebarNav() {
     { to: '/', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/devices', label: 'Perangkat', icon: Server },
     { to: '/genset-mobile', label: 'Genset Mobile', icon: Zap },
+    { to: '/locations', label: 'Manajemen Lokasi', icon: MapPin },
     ...(user?.role === 'ADMIN' ? [{ to: '/users', label: 'User Management', icon: Users }] : []),
     { to: '/settings', label: 'Settings', icon: Settings },
   ]
