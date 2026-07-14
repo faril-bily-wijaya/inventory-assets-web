@@ -10,6 +10,7 @@ import { Badge } from '../components/ui/Badge'
 import { DeviceModal } from '../components/modals/DeviceModal'
 import { ConfirmModal } from '../components/modals/ConfirmModal'
 import { ImportTab } from '../components/import/ImportTab'
+import { Skeleton } from '../components/ui/Skeleton'
 import toast from 'react-hot-toast'
 import { SidebarNav } from '../components/layout/SidebarNav'
 import { Select } from '../components/ui/Select'
@@ -300,14 +301,60 @@ export default function DevicesPage() {
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {isLoading ? (
-                  <tr>
-                    <td colSpan={15} className="p-12 text-center text-[var(--text-muted)]">
-                      <div className="flex flex-col items-center justify-center space-y-3">
-                        <div className="w-8 h-8 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin" />
-                        <p>Memuat data perangkat...</p>
-                      </div>
-                    </td>
-                  </tr>
+                  Array.from({ length: 5 }).map((_, idx) => (
+                    <tr key={idx}>
+                      <td className="p-4"><Skeleton className="h-4 w-4" /></td>
+                      <td className="p-4"><Skeleton className="h-4 w-24" /></td>
+                      <td className="p-4"><Skeleton className="h-4 w-32" /></td>
+                      <td className="p-4"><Skeleton className="h-4 w-20" /></td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-28" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-3 w-16" />
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-12" />
+                          <Skeleton className="h-3 w-16" />
+                        </div>
+                      </td>
+                      <td className="p-4"><Skeleton className="h-6 w-20 rounded-full" /></td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className="h-4 w-16" />
+                        </div>
+                      </td>
+                      <td className="p-4"><Skeleton className="h-4 w-20" /></td>
+                      <td className="p-4"><Skeleton className="h-6 w-24 rounded-full" /></td>
+                      <td className="p-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-32" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                      </td>
+                      <td className="p-4"><Skeleton className="h-4 w-24" /></td>
+                      <td className="p-4">
+                        <div className="flex gap-2 justify-end">
+                          <Skeleton className="h-8 w-8 rounded" />
+                          <Skeleton className="h-8 w-8 rounded" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                 ) : devices.length === 0 ? (
                   <tr>
                     <td colSpan={15} className="p-12 text-center text-[var(--text-muted)]">

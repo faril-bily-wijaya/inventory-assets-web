@@ -5,6 +5,7 @@ import { api } from '../contexts/AuthContext'
 import { Trash2, UserCheck, UserX, Shield, ShieldAlert, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { cn } from '../utils/cn'
+import { Skeleton } from '../components/ui/Skeleton'
 
 interface User {
   id: string
@@ -103,12 +104,35 @@ export default function UsersManagementPage() {
               </thead>
               <tbody className="divide-y divide-[var(--border)]">
                 {isLoading ? (
-                  <tr>
-                    <td colSpan={5} className="py-8 text-center text-[var(--text-muted)]">
-                      <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-                      Loading users...
-                    </td>
-                  </tr>
+                  Array.from({ length: 5 }).map((_, idx) => (
+                    <tr key={idx}>
+                      <td className="py-3 px-6">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="w-10 h-10 rounded-full" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-32" />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-6">
+                        <Skeleton className="h-6 w-20 rounded-md" />
+                      </td>
+                      <td className="py-3 px-6 text-center">
+                        <Skeleton className="h-5 w-16 rounded-full mx-auto" />
+                      </td>
+                      <td className="py-3 px-6">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="py-3 px-6 text-right">
+                        <div className="flex justify-end gap-2">
+                          <Skeleton className="h-7 w-7 rounded-md" />
+                          <Skeleton className="h-7 w-7 rounded-md" />
+                          <Skeleton className="h-7 w-7 rounded-md" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                 ) : users.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-[var(--text-muted)]">
