@@ -35,13 +35,11 @@ export default function DevicesPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [conditionFilter, setConditionFilter] = useState('')
   const [locationFilter, setLocationFilter] = useState('')
-  const [deviceCategory, setDeviceCategory] = useState<'all' | 'genset'>('all')
-
   useEffect(() => {
     setPagination(prev => ({ ...prev, page: 1 }))
-  }, [statusFilter, conditionFilter, locationFilter, deviceCategory])
+  }, [statusFilter, conditionFilter, locationFilter])
 
-  useEffect(() => { loadDevices() }, [pagination.page, statusFilter, conditionFilter, locationFilter, deviceCategory])
+  useEffect(() => { loadDevices() }, [pagination.page, statusFilter, conditionFilter, locationFilter])
 
   const loadDevices = async () => {
     try {
@@ -53,7 +51,6 @@ export default function DevicesPage() {
         status: statusFilter || undefined,
         condition: conditionFilter || undefined,
         locationId: locationFilter || undefined,
-        deviceType: deviceCategory === 'genset' ? 'Genset Mobile,Genset Mobil,Dummy Load' : undefined,
       }
       const response = await deviceService.getDevices(filters)
       setDevices(response.devices)
@@ -174,29 +171,6 @@ export default function DevicesPage() {
         {/* Tab Content */}
         {activeTab === 'list' ? (
           <>
-        {/* Quick Filter Tabs for Device Category */}
-        <div className="flex gap-2 mb-4 mt-2">
-          <button
-            onClick={() => setDeviceCategory('all')}
-            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 ${
-              deviceCategory === 'all'
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 shadow-sm'
-                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
-            }`}
-          >
-            Semua Perangkat
-          </button>
-          <button
-            onClick={() => setDeviceCategory('genset')}
-            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 ${
-              deviceCategory === 'genset'
-                ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400 shadow-sm'
-                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-800'
-            }`}
-          >
-            ⚡ Genset Mobile
-          </button>
-        </div>
 
         <Card className="mb-6">
           <div className="flex flex-col md:flex-row gap-4">
