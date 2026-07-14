@@ -77,13 +77,13 @@ export function FileDropzone({ onFileSelect, selectedFile, onClear, disabled }: 
 
   if (selectedFile) {
     return (
-      <div className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
-        <File className="w-8 h-8 text-cyan-400 flex-shrink-0" />
+      <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-[var(--border)]">
+        <File className="w-8 h-8 text-cyan-500 dark:text-cyan-400 flex-shrink-0" />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-200 truncate">
+          <p className="text-sm font-medium text-[var(--text-primary)] truncate">
             {selectedFile.name}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-[var(--text-secondary)]">
             {formatFileSize(selectedFile.size)}
           </p>
         </div>
@@ -91,11 +91,11 @@ export function FileDropzone({ onFileSelect, selectedFile, onClear, disabled }: 
           onClick={onClear}
           disabled={disabled}
           className={cn(
-            "p-2 rounded-lg hover:bg-slate-700 transition-colors",
+            "p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors",
             disabled && "opacity-50 cursor-not-allowed"
           )}
         >
-          <X className="w-4 h-4 text-slate-400" />
+          <X className="w-4 h-4 text-[var(--text-secondary)]" />
         </button>
       </div>
     )
@@ -110,8 +110,8 @@ export function FileDropzone({ onFileSelect, selectedFile, onClear, disabled }: 
         className={cn(
           "relative border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
           isDragging
-            ? "border-cyan-400 bg-cyan-500/10"
-            : "border-slate-700 hover:border-slate-600",
+            ? "border-cyan-500 bg-cyan-50 dark:border-cyan-400 dark:bg-cyan-500/10"
+            : "border-[var(--border)] hover:border-slate-400 dark:hover:border-slate-600",
           disabled && "opacity-50 cursor-not-allowed"
         )}
       >
@@ -124,12 +124,12 @@ export function FileDropzone({ onFileSelect, selectedFile, onClear, disabled }: 
         />
         <Upload className={cn(
           "w-10 h-10 mx-auto mb-3",
-          isDragging ? "text-cyan-400" : "text-slate-500"
+          isDragging ? "text-cyan-500 dark:text-cyan-400" : "text-[var(--text-muted)]"
         )} />
-        <p className="text-sm text-slate-300 mb-1">
+        <p className="text-sm text-[var(--text-primary)] mb-1">
           Drag & drop file atau klik untuk pilih
         </p>
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-[var(--text-secondary)]">
           Format: CSV, XLSX, XLS (maksimal 10MB)
         </p>
       </div>

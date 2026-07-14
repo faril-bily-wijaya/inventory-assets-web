@@ -122,8 +122,8 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-slate-200">Import Devices</h2>
-          <p className="text-sm text-slate-400">Import data device dari file CSV atau Excel</p>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">Import Devices</h2>
+          <p className="text-sm text-[var(--text-secondary)]">Import data device dari file CSV atau Excel</p>
         </div>
         <Button
           variant="secondary"
@@ -151,7 +151,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
         <div className="space-y-6">
           {/* Format Selection */}
           <div>
-            <h3 className="text-sm font-medium text-slate-300 mb-3">1. Pilih Format File</h3>
+            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">1. Pilih Format File</h3>
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
@@ -163,9 +163,9 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
                     setInternalImportType('default')
                     handleClear()
                   }}
-                  className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500"
+                  className="w-4 h-4 text-cyan-500 bg-white border-slate-300 focus:ring-cyan-500 dark:bg-slate-800 dark:border-slate-600"
                 />
-                <span className="text-sm text-slate-300">Format Standar (Default)</span>
+                <span className="text-sm text-[var(--text-secondary)]">Format Standar (Default)</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input 
@@ -177,16 +177,16 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
                     setInternalImportType('genset')
                     handleClear()
                   }}
-                  className="w-4 h-4 text-cyan-500 bg-slate-800 border-slate-600 focus:ring-cyan-500"
+                  className="w-4 h-4 text-cyan-500 bg-white border-slate-300 focus:ring-cyan-500 dark:bg-slate-800 dark:border-slate-600"
                 />
-                <span className="text-sm text-slate-300">Format Genset Mobile</span>
+                <span className="text-sm text-[var(--text-secondary)]">Format Genset Mobile</span>
               </label>
             </div>
           </div>
 
           {/* File Selection */}
           <div>
-            <h3 className="text-sm font-medium text-slate-300 mb-3">2. Pilih File</h3>
+            <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">2. Pilih File</h3>
             <FileDropzone
               onFileSelect={handleFileSelect}
               selectedFile={selectedFile}
@@ -198,7 +198,7 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
           {/* Mode Selection */}
           {selectedFile && (
             <div>
-              <h3 className="text-sm font-medium text-slate-300 mb-3">3. Pilih Mode</h3>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">3. Pilih Mode</h3>
               <ModeSelector
                 value={mode}
                 onChange={setMode}
@@ -223,8 +223,8 @@ export function ImportTab({ importType = 'default' }: ImportTabProps) {
           {/* Preview */}
           {preview && step === 'preview' && (
             <>
-              <div className="border-t border-slate-700 pt-6">
-                <h3 className="text-sm font-medium text-slate-300 mb-3">4. Preview Data</h3>
+              <div className="border-t border-[var(--border)] pt-6">
+                <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">4. Preview Data</h3>
                 <ImportPreview
                   preview={preview}
                   onConfirm={handleConfirm}
