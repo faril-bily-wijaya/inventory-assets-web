@@ -321,7 +321,7 @@ router.get('/export', async (req, res) => {
         'Rak': d.rack_name,
         'Keterangan': d.keterangan,
         'Butuh Modernisasi': modernization.butuhModernisasi ? 'YA' : 'TIDAK',
-        'Usia Maksimal': modernization.usiaMaksimal,
+        'Keterangan Modernisasi': modernization.alasan || '-',
       }
     })
 
