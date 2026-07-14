@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Pencil, Trash2, List, Upload } from 'lucide-react'
+import { Plus, Search, Pencil, Trash2, List, Upload, Download } from 'lucide-react'
 import { PageContainer } from '../components/layout/PageContainer'
 import { deviceService, type DeviceFilters } from '../services/deviceService'
 import type { Device } from '../types'
@@ -29,6 +29,7 @@ export default function DevicesPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingDevice, setDeletingDevice] = useState<Device | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isExporting, setIsExporting] = useState(false)
 
   // Filters
   const { locations } = useMapContext()
@@ -115,6 +116,38 @@ export default function DevicesPage() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      setIsExporting(true)
+      const filters: DeviceFilters = {
+        search: searchTerm || undefined,
+        status: statusFilter || undefined,
+        condition: conditionFilter || undefined,
+        locationId: locationFilter || undefined,
+      }
+      
+      const blob = await deviceService.exportDevices(filters)
+      
+      // Create object url and trigger download
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Data_Perangkat_${new Date().toISOString().split('T')[0]}.xlsx`
+      document.body.appendChild(a)
+      a.click()
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+      toast.success('Data berhasil diexport')
+    } catch (error) {
+      toast.error('Gagal mengexport data')
+      console.error(error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   const getStatusVariant = (status: string) => {
     const s = status?.toUpperCase() || ''
     if (['AKTIF', 'OPERATIONAL', 'ACTIVE'].includes(s)) return 'success'
@@ -132,13 +165,23 @@ export default function DevicesPage() {
             <p className="text-[var(--text-muted)]">Manajemen perangkat inventaris</p>
           </div>
           {activeTab === 'list' && (
-            <Button
-              variant="primary"
-              leftIcon={<Plus className="w-4 h-4" />}
-              onClick={() => { setEditingDevice(null); setIsDeviceModalOpen(true) }}
-            >
-              Add Device
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="secondary"
+                leftIcon={<Download className="w-4 h-4" />}
+                onClick={handleExport}
+                disabled={isExporting}
+              >
+                {isExporting ? 'Exporting...' : 'Export Data'}
+              </Button>
+              <Button
+                variant="primary"
+                leftIcon={<Plus className="w-4 h-4" />}
+                onClick={() => { setEditingDevice(null); setIsDeviceModalOpen(true) }}
+              >
+                Add Device
+              </Button>
+            </div>
           )}
         </div>
 

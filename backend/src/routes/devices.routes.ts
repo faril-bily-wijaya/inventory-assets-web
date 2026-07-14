@@ -191,6 +191,155 @@ router.get('/', async (req, res) => {
   }
 })
 
+// GET /api/devices/export
+router.get('/export', async (req, res) => {
+  try {
+    const { search, status, condition, deviceType, locationId } = req.query
+    const where: any = { deleted_at: null }
+    const andConditions: any[] = []
+
+    if (search) {
+      andConditions.push({
+        OR: [
+          { device_code: { contains: search as string, mode: 'insensitive' } },
+          { device_name: { contains: search as string, mode: 'insensitive' } },
+          { serial_number: { contains: search as string, mode: 'insensitive' } },
+          { brand: { contains: search as string, mode: 'insensitive' } },
+          { model: { contains: search as string, mode: 'insensitive' } },
+          { device_type: { contains: search as string, mode: 'insensitive' } },
+          { kapasitas: { contains: search as string, mode: 'insensitive' } },
+          { ruangan_name: { contains: search as string, mode: 'insensitive' } },
+          { rack_name: { contains: search as string, mode: 'insensitive' } },
+          { locations: { name: { contains: search as string, mode: 'insensitive' } } },
+          { locations: { site_code: { contains: search as string, mode: 'insensitive' } } },
+        ]
+      })
+    }
+    
+    if (status) {
+      if (status === 'MODERNISASI') {
+        const currentYear = new Date().getFullYear()
+        andConditions.push({
+          OR: [
+            { device_type: { equals: 'ACSPLIT', mode: 'insensitive' }, year: { lt: currentYear - 15 } },
+            { device_type: { equals: 'ACSTANDING', mode: 'insensitive' }, year: { lt: currentYear - 15 } },
+            { device_type: { equals: 'RECTIFIER', mode: 'insensitive' }, year: { lt: currentYear - 15 } },
+            { device_type: { equals: 'BATKERING', mode: 'insensitive' }, year: { lt: currentYear - 10 } },
+            { device_type: { equals: 'BATBASAH', mode: 'insensitive' }, year: { lt: currentYear - 20 } },
+            { device_type: { equals: 'GENSET', mode: 'insensitive' }, year: { lt: currentYear - 25 } },
+          ]
+        })
+      } else {
+        andConditions.push({ status })
+      }
+    }
+    
+    if (condition) {
+      andConditions.push({ condition })
+    }
+    
+    if (deviceType) {
+      const types = (deviceType as string).split(',').map(t => t.trim())
+      andConditions.push({ device_type: { in: types } })
+    }
+    
+    if (locationId) {
+      andConditions.push({ location_id: locationId })
+    }
+
+    if (andConditions.length > 0) {
+      where.AND = andConditions
+    }
+
+    const devices = await prisma.devices.findMany({
+      where,
+      include: {
+        locations: {
+          include: {
+            clusters: {
+              include: {
+                districts: {
+                  include: { regionals: { include: { areas: true } } }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' },
+    }) as any
+
+    const XLSX = await import('xlsx')
+    const exportData = devices.map((d: any, index: number) => {
+      const modernization = hitungButuhModernisasi(d.device_type, d.year || new Date().getFullYear())
+      const isGensetMobile = d.device_type === 'GENSET MOBILE' || d.device_type === 'GENSET MOBIL'
+      const baseExport = {
+        'NO': index + 1,
+        'Perangkat': d.device_type,
+        'MYASSET ID': d.device_code,
+        'STO': d.locations?.name,
+        'Site Code': d.locations?.site_code,
+        'Area': d.locations?.areas?.name || d.locations?.clusters?.districts?.regionals?.areas?.name || '',
+        'Regional': d.locations?.regionals?.name || d.locations?.clusters?.districts?.regionals?.name || '',
+        'District': d.locations?.districts?.name || d.locations?.clusters?.districts?.name || '',
+        'Cluster': d.locations?.clusters?.name || '',
+        'Latitude': d.locations?.latitude,
+        'Longitude': d.locations?.longitude,
+      }
+
+      if (isGensetMobile) {
+        return {
+          ...baseExport,
+          'MERK': d.brand,
+          'Kapasitas (KVA) / A': d.kapasitas + (d.satuan_kapasitas ? ' ' + d.satuan_kapasitas : ''),
+          'Kondisi': d.condition,
+          'KETERANGAN': d.keterangan,
+        }
+      }
+
+      return {
+        ...baseExport,
+        'Tipe Class': d.locations?.class_type,
+        'Teknisi': d.locations?.teknisi,
+        'Alamat Site': d.locations?.address,
+        'Device Name': d.device_name,
+        'Brand': d.brand,
+        'Model': d.model,
+        'Serial Number': d.serial_number,
+        'Label Code': d.label_code,
+        'Kapasitas': d.kapasitas,
+        'Satuan Kapasitas': d.satuan_kapasitas,
+        'Jenis Tegangan': d.jenis_tegangan,
+        'Beban Arus': d.beban_arus,
+        'Satuan Beban': d.satuan_beban,
+        'Cap Real': d.cap_real,
+        'Tahun': d.year,
+        'Usia Perangkat': d.usia_perangkat,
+        'Status': d.status,
+        'Kondisi': d.condition,
+        'Ruangan': d.ruangan_name,
+        'Rak': d.rack_name,
+        'Keterangan': d.keterangan,
+        'Butuh Modernisasi': modernization.butuhModernisasi ? 'YA' : 'TIDAK',
+        'Usia Maksimal': modernization.usiaMaksimal,
+      }
+    })
+
+    const ws = XLSX.utils.json_to_sheet(exportData)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Data Perangkat')
+
+    const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    res.setHeader('Content-Disposition', 'attachment; filename=export_devices.xlsx')
+    res.send(buffer)
+  } catch (error) {
+    console.error('Error exporting devices:', error)
+    res.status(500).json({ error: 'Terjadi kesalahan saat mengekspor data' })
+  }
+})
+
 // GET /api/devices/stats
 router.get('/stats', async (req, res) => {
   try {

@@ -47,4 +47,12 @@ export const deviceService = {
     const response = await api.get<DeviceStats>('/devices/stats')
     return response.data
   },
+
+  async exportDevices(filters: DeviceFilters = {}): Promise<Blob> {
+    const response = await api.get('/devices/export', {
+      params: filters,
+      responseType: 'blob',
+    })
+    return response.data
+  },
 }
