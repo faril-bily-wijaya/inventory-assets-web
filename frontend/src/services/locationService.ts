@@ -108,4 +108,22 @@ export const locationService = {
     const response = await api.delete(`/hierarchy/clusters/${id}`)
     return response.data
   },
+
+  async bulkDelete(type: 'area' | 'regional' | 'district' | 'cluster' | 'location', ids: string[]) {
+    switch (type) {
+      case 'area': return Promise.all(ids.map(id => this.deleteArea(id)))
+      case 'regional': return Promise.all(ids.map(id => this.deleteRegional(id)))
+      case 'district': return Promise.all(ids.map(id => this.deleteDistrict(id)))
+      case 'cluster': return Promise.all(ids.map(id => this.deleteCluster(id)))
+      case 'location': return Promise.all(ids.map(id => this.deleteLocation(id)))
+    }
+  },
+
+  async bulkMove(type: 'regional' | 'district' | 'cluster', items: { id: string, name: string }[], newParentId: string) {
+    switch (type) {
+      case 'regional': return Promise.all(items.map(i => this.updateRegional(i.id, i.name, newParentId)))
+      case 'district': return Promise.all(items.map(i => this.updateDistrict(i.id, i.name, newParentId)))
+      case 'cluster': return Promise.all(items.map(i => this.updateCluster(i.id, i.name, newParentId)))
+    }
+  },
 }

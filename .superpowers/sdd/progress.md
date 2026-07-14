@@ -84,3 +84,15 @@ docs/superpowers/plans/2026-07-03-add-uuid-organization-fields-plan.md
 - Monospace: JetBrains Mono
 
 ---
+
+## Plan 3: CRUD Lokasi STO/Site
+docs/superpowers/plans/2026-07-14-crud-lokasi-sto-plan.md
+BASE commit: c894fa345ed724e41b5214135636a661c5ce6e02
+
+| Task | Status | Commits | Notes |
+|------|--------|---------|-------|
+| Task 1 | COMPLETE | 11e6385 | Backend soft delete + cache invalidation |
+| Task 2 | COMPLETE | fc772cf | Frontend LocationFormModal |
+| Task 3 | COMPLETE | 22512a4 | Frontend integration |
+
+---
