@@ -197,8 +197,8 @@ export default function GensetMobilePage() {
                     ) : (
                       devices.map((device) => {
                         const loc = locations.find(l => l.id === device.locationId) || device.location
-                        const distName = loc?.cluster?.district?.name || 'Unknown District'
-                        const regName = loc?.cluster?.district?.regional?.name || 'Unknown Regional'
+                        const distName = (loc as any)?.clusters?.districts?.name || 'Unknown District'
+                        const regName = (loc as any)?.clusters?.districts?.regionals?.name || 'Unknown Regional'
                         return (
                           <tr key={device.id} className="border-b border-[var(--border)] hover:bg-[var(--bg-elevated)] transition-colors group cursor-pointer" onClick={() => setEditingDevice(device)}>
                             <td className="p-4">
